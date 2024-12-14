@@ -40,8 +40,6 @@ public class User extends BaseEntity {
     @Column(name = "IS_AGREE_POLICY")
     private Boolean isAgreePolicy;
 
-
-
     @Override
     public boolean equals(final Object object) {
         if (this == object) {
