@@ -22,17 +22,17 @@ public class User extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "LOGIN_ID", nullable = false)
-    private String loginId;
+    @Column(name = "EMAIL", nullable = false)
+    private String email;
 
-    @Column(name = "LOGIN_PW", nullable = false)
-    private String loginPassword;
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
 
-    @Column(name = "USER_NAME")
-    private String username;
+    @Column(name = "NAME")
+    private String name;
 
-    @Column(name = "BIRTH_DATE")
-    private String birthDate;
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
 
     @Column(name = "PROFILE_IMAGE")
     private String profileImage;
