@@ -28,7 +28,7 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder()
                 .setSigningKey(secretkey)
                 .build()
-                .parseClaimsJwt(jwtToken)
+                .parseClaimsJws(jwtToken)
                 .getBody()
                 .getSubject();
     }
