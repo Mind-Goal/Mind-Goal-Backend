@@ -1,4 +1,4 @@
-package com.mindgoal.domain.user.entity;
+package com.mindgoal.domain.payment.entity;
 
 import com.mindgoal.common.BaseEntity;
 import jakarta.persistence.Column;
@@ -7,53 +7,48 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "USERS")
+@Table(name = "POINTS")
 @Entity
 @Getter
-public class User extends BaseEntity {
+public class Point extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "EMAIL", nullable = false)
-    private String email;
+    @Column(name = "AMOUNT", nullable = false)
+    private int amount;
 
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+    @Column(name = "POINT_TYPE")
+    private String pointType;
 
-    @Column(name = "NAME")
-    private String name;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-    @Column(name = "PHONE_NUMBER")
-    private String phoneNumber;
-
-    @Column(name = "PROFILE_IMAGE")
-    private String profileImage;
-
-    @Column(name = "IS_AGREE_POLICY")
-    private Boolean isAgreePolicy;
+    @Column(name = "EXPIRED_AT")
+    private LocalDate expiredAt;
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(Object object) {
         if (this == object) {
             return true;
         }
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        User user = (User) object;
-        return Objects.equals(id, user.id);
+        Point point = (Point) object;
+        return Objects.equals(id, point.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hashCode(id);
     }
 }
