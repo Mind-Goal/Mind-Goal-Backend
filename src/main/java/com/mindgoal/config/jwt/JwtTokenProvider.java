@@ -47,7 +47,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String jwtToken){
         //유저 데이터 가져와서 비교
-        return
+        return null;
     }
 
 
