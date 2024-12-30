@@ -29,9 +29,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try{
             String jwtToken = parseJwt(request);
 
-            if(jwtToken != null && jwtTokenProvider.valideToken(jwtToken)){
-                Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            if(jwtToken != null){
+                if(jwtTokenProvider.valideToken(jwtToken)){
+                    Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }else{
+                    //새로운 토큰 발급
+                    String token = jwtTokenProvider.generateToken(String userName);// 요청된 회원정도 들어가야함
+                    // 새로운 토큰 헤더에 추가
+                    response.setHeader("Authorization", "Bearer " + token);
+                    //인증 로직
+                    Authentication auth = jwtTokenProvider.getAuthentication(token);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+
             }
         }catch (ExpiredJwtException e){
             response.sendError(HttpStatus.UNAUTHORIZED.value(),"토큰이 만료되었습니다.");

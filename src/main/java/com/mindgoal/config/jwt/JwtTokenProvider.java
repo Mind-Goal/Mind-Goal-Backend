@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,17 +17,17 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${}") String secretkey;
+    private final Key key;
     private final long VALID_MILISECOND = 1000L * 60 * 60; // 1시간
 
-    private Key getSecretKey(@Value("${}") String secretkey){
-        byte[] keyBytes = secretkey.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public JwtTokenProvider(@Value("${}") String secretkey) {
+        byte[] keyBytes = Decoders.BASE64.decode(secretkey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     private String getUserName(String jwtToken){
         return Jwts.parserBuilder()
-                .setSigningKey(secretkey)
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(jwtToken)
                 .getBody()
@@ -36,7 +37,7 @@ public class JwtTokenProvider {
     public boolean valideToken(String jwtToken){
         try{
             Jws<Claims> claims = Jwts.parserBuilder()
-                                    .setSigningKey(getSecretKey(secretkey))
+                                    .setSigningKey(key)
                                     .build()
                                     .parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
@@ -47,16 +48,30 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String jwtToken){
         //유저 데이터 가져와서 비교
-        return
+        return null;
     }
 
 
-    public String generateToken(String username){
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + VALID_MILISECOND))
-                .signWith(getSecretKey(secretkey), SignatureAlgorithm.HS256)
+    public TokenDto generateToken(String userName){
+        long now = (new Date()).getTime();
+        Claims claims = Jwts.claims().setSubject(userName);
+        Date accessTokenExpiresIn = new Date(now + VALID_MILISECOND);
+        String accessToken = Jwts.builder()
+                .setClaims(claims) // 발행 유저 정보 저장
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + 86400000))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return TokenDto.builder()
+                .grantType("Bearer ")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn)
+                .build();
     }
 }
