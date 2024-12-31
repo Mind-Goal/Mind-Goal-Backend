@@ -1,4 +1,4 @@
-package com.mindgoal.backend;
+package com.mindgoal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
