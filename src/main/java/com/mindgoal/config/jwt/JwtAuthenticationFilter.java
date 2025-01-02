@@ -31,16 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if(jwtToken != null){
                 if(jwtTokenProvider.valideToken(jwtToken)){
-                    Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    processValidToken(jwtToken);
                 }else{
-                    //새로운 토큰 발급
-                    String token = jwtTokenProvider.generateToken(String userName);// 요청된 회원정도 들어가야함
-                    // 새로운 토큰 헤더에 추가
-                    response.setHeader("Authorization", "Bearer " + token);
-                    //인증 로직
-                    Authentication auth = jwtTokenProvider.getAuthentication(token);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    processExpiredToken(jwtToken,response);
                 }
 
             }
@@ -56,6 +49,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
+    // 토큰 처리 로직 분리
+    private void processValidToken(String token) {
+        Authentication auth = jwtTokenProvider.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    // 만료 토큰 검증후 재발급
+    private void processExpiredToken(String oldToken, HttpServletResponse response) {
+        String username = jwtTokenProvider.getUserName(oldToken);
+        TokenDto newToken = jwtTokenProvider.generateToken(username);
+        response.setHeader(AUTHORAIZATION_Header, BEARER_PREFIX + newToken.getAccessToken());
+
+        Authentication auth = jwtTokenProvider.getAuthentication(newToken.getAccessToken());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    //jwt 헤더 파싱
     private String parseJwt(HttpServletRequest request){
         String headerAuth = request.getHeader(AUTHORAIZATION_Header);
         if(StringUtils.hasText(headerAuth)&& headerAuth.startsWith(BEARER_PREFIX)){

@@ -1,17 +1,30 @@
 package com.mindgoal.config.jwt;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-
+import org.springframework.util.StringUtils;
 import java.util.Date;
 
-@Builder
 @Getter
-@Setter
 public class TokenDto {
     private String grantType;
     private String accessToken;
     private String refreshToken;
     private Date accessTokenExpiresIn;
+
+    public TokenDto(String grantType, String accessToken, String refreshToken, Date accessTokenExpiresIn){
+        validateTokenData(accessToken,refreshToken);
+        this.grantType = grantType;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.accessTokenExpiresIn = accessTokenExpiresIn;
+    }
+
+    private void validateTokenData(String accessToken, String refreshToken) {
+        if (StringUtils.isEmpty(accessToken)) {
+            throw new IllegalArgumentException("Access Token cannot be empty");
+        }
+        if (StringUtils.isEmpty(refreshToken)) {
+            throw new IllegalArgumentException("Refresh Token cannot be empty");
+        }
+    }
 }

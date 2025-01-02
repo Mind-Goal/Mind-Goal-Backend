@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -19,13 +18,15 @@ public class JwtTokenProvider {
 
     private final Key key;
     private final long VALID_MILISECOND = 1000L * 60 * 60; // 1시간
+    private static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24; // 24시간
+    private static final String BEARER_PREFIX = "Bearer ";
 
-    public JwtTokenProvider(@Value("${}") String secretkey) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretkey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String getUserName(String jwtToken){
+    public String getUserName(String jwtToken){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -37,9 +38,9 @@ public class JwtTokenProvider {
     public boolean valideToken(String jwtToken){
         try{
             Jws<Claims> claims = Jwts.parserBuilder()
-                                    .setSigningKey(key)
-                                    .build()
-                                    .parseClaimsJws(jwtToken);
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         }catch (Exception e){
             return false;
@@ -51,11 +52,19 @@ public class JwtTokenProvider {
         return null;
     }
 
+    private Claims createClaims(String userName){
+        Claims claims = Jwts.claims();
+        claims.setSubject(userName);
+        claims.setIssuedAt(new Date());
+
+        return claims;
+    }
 
     public TokenDto generateToken(String userName){
+        Claims claims = createClaims(userName);
         long now = (new Date()).getTime();
-        Claims claims = Jwts.claims().setSubject(userName);
         Date accessTokenExpiresIn = new Date(now + VALID_MILISECOND);
+
         String accessToken = Jwts.builder()
                 .setClaims(claims) // 발행 유저 정보 저장
                 .setExpiration(accessTokenExpiresIn)
@@ -63,15 +72,10 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
+                .setExpiration(new Date(now + REFRESH_TOKEN_VALIDITY))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        return TokenDto.builder()
-                .grantType("Bearer ")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn)
-                .build();
+        return new TokenDto(BEARER_PREFIX, accessToken, refreshToken, accessTokenExpiresIn);
     }
 }
