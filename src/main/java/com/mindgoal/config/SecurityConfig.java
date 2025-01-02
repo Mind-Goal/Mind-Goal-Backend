@@ -34,6 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 관련 경로 허용
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                                 .requestMatchers(API_V_1 + "oauth/login").permitAll()
                                 .requestMatchers(API_V_1 + "oauth/logout").authenticated()
