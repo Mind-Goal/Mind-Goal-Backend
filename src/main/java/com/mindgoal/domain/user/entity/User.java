@@ -1,14 +1,10 @@
 package com.mindgoal.domain.user.entity;
 
 import com.mindgoal.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +35,16 @@ public class User extends BaseEntity {
 
     @Column(name = "IS_AGREE_POLICY")
     private Boolean isAgreePolicy;
+    @Builder
+    public User(String email, String password, String name, String phoneNumber,
+                String profileImage, Boolean isAgreePolicy) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.profileImage = profileImage;
+        this.isAgreePolicy = isAgreePolicy;
+    }
 
     @Override
     public boolean equals(final Object object) {
