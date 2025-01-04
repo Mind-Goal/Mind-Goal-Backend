@@ -1,49 +1,39 @@
-package com.mindgoal.domain.schedule.entity;
+package com.mindgoal.domain.payment.entity;
 
 import com.mindgoal.common.BaseEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "SCHEDULES")
+@Table(name = "POINTS")
 @Entity
 @Getter
-public class Schedule extends BaseEntity {
+public class Point extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "SESSION_COUNT")
-    private int sessionCount;
+    @Column(name = "AMOUNT", nullable = false)
+    private int amount;
 
-    @Column(name = "SESSION_TYPE")
-    private String sessionType;
+    @Column(name = "POINT_TYPE")
+    private String pointType;
 
-    @Embedded
-    private ScheduleDate scheduleDate;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-    @Column(name = "STATUS")
-    @Enumerated(EnumType.STRING)
-    private ScheduleStatus status;
-
-    public Schedule(int sessionCount, String sessionType, ScheduleDate scheduleDate, ScheduleStatus status) {
-        this.sessionCount = sessionCount;
-        this.sessionType = sessionType;
-        this.scheduleDate = scheduleDate;
-        this.status = status;
-    }
+    @Column(name = "EXPIRED_AT")
+    private LocalDate expiredAt;
 
     @Override
     public boolean equals(Object object) {
@@ -53,8 +43,8 @@ public class Schedule extends BaseEntity {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Schedule schedule = (Schedule) object;
-        return Objects.equals(id, schedule.id);
+        Point point = (Point) object;
+        return Objects.equals(id, point.id);
     }
 
     @Override
