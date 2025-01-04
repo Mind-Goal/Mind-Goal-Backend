@@ -6,6 +6,8 @@ import com.mindgoal.domain.user.repository.UserRepository;
 import com.mindgoal.domain.user.dto.KakaoUserInfo;
 import com.mindgoal.domain.user.dto.TokenDto;
 import com.mindgoal.config.jwt.JwtTokenProvider;
+    import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,6 +33,20 @@ public class UserService {
     @Value("${KAKAO_REDIRECT_URI}")
     private String redirectUri;
 
+    @Transactional
+    public void logout(HttpServletRequest request) {
+        // SecurityContext 초기화
+        SecurityContextHolder.clearContext();
+
+        // 세션 무효화
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // 현재 스레드의 로컬 컨텍스트 정리
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
     @Transactional
     public TokenDto kakaoLogin(String code) {
         String accessToken = getKakaoAccessToken(code);
