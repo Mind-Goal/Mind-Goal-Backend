@@ -10,13 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,9 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try{
             String jwtToken = parseJwt(request);
 
-            if(jwtToken != null && jwtTokenProvider.valideToken(jwtToken)){
-                Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            if(jwtToken != null){
+                if(jwtTokenProvider.valideToken(jwtToken)){
+                    processValidToken(jwtToken);
+                }else{
+                    processExpiredToken(jwtToken,response);
+                }
+
             }
         }catch (ExpiredJwtException e){
             response.sendError(HttpStatus.UNAUTHORIZED.value(),"토큰이 만료되었습니다.");
@@ -47,6 +49,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
+    // 토큰 처리 로직 분리
+    private void processValidToken(String token) {
+        Authentication auth = jwtTokenProvider.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    // 만료 토큰 검증후 재발급
+    private void processExpiredToken(String oldToken, HttpServletResponse response) {
+        String username = jwtTokenProvider.getUserName(oldToken);
+        JwTokenDto newToken = jwtTokenProvider.generateToken(username);
+        response.setHeader(AUTHORAIZATION_Header, BEARER_PREFIX + newToken.getAccessToken());
+
+        Authentication auth = jwtTokenProvider.getAuthentication(newToken.getAccessToken());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    //jwt 헤더 파싱
     private String parseJwt(HttpServletRequest request){
         String headerAuth = request.getHeader(AUTHORAIZATION_Header);
         if(StringUtils.hasText(headerAuth)&& headerAuth.startsWith(BEARER_PREFIX)){

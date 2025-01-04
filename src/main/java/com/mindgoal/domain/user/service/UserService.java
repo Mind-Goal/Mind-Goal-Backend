@@ -1,12 +1,13 @@
 package com.mindgoal.domain.user.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mindgoal.domain.user.entity.User;
-import com.mindgoal.domain.user.repository.UserRepository;
+
 import com.mindgoal.domain.user.dto.KakaoUserInfo;
 import com.mindgoal.domain.user.dto.TokenDto;
+import com.mindgoal.domain.user.entity.User;
+import com.mindgoal.domain.user.repository.UserRepository;
 import com.mindgoal.config.jwt.JwtTokenProvider;
-    import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

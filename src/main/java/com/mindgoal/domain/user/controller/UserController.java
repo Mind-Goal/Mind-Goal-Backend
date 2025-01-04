@@ -1,5 +1,6 @@
 package com.mindgoal.domain.user.controller;
 
+
 import com.mindgoal.domain.user.dto.KakaoLoginRequest;
 import com.mindgoal.domain.user.dto.TokenDto;
 import com.mindgoal.domain.user.entity.User;
