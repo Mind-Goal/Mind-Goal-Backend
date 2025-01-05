@@ -10,6 +10,9 @@ public enum GlobalErrorCode implements ErrorCode {
     UNSUPPORTED_PARAMETER_TYPE(HttpStatus.BAD_REQUEST, "Unsupported type of parameter included"),
     UNSUPPORTED_PARAMETER_NAME(HttpStatus.BAD_REQUEST, "Unsupported name of parameter included"),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not exists"),
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Token not found"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid token"),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Expired token"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     EXTERNAL_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "external api error. check server log.");
     private final HttpStatus httpStatus;

@@ -1,9 +1,11 @@
 package com.mindgoal.common.error.handler;
 
+import com.mindgoal.common.error.ErrorCode;
+import com.mindgoal.common.error.GlobalErrorCode;
+import com.mindgoal.common.error.response.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,17 +15,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<ApiResponse> handleSignatureException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("토큰이 유효하지 않습니다."));
+    public ResponseEntity<?> handleSignatureException() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(handleExceptionInternal(GlobalErrorCode.TOKEN_NOT_FOUND));
     }
 
     @ExceptionHandler(MalformedJwtException.class)
-    public ResponseEntity<ApiResponse> handleMalformedJwtException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("올바르지 않은 토큰입니다."));
+    public ResponseEntity<?> handleMalformedJwtException() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(GlobalErrorCode.INVALID_TOKEN);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ApiResponse> handleExpiredJwtException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("토큰이 만료되었습니다. 다시 로그인해주세요."));
+    public ResponseEntity<?> handleExpiredJwtException() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(GlobalErrorCode.EXPIRED_TOKEN);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ErrorResponse.from(errorCode));
     }
 }
