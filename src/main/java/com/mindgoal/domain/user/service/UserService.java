@@ -119,4 +119,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public void withdrawUser() {
+        User user = getCurrentUser();
+        userRepository.delete(user);
+        SecurityContextHolder.clearContext();
+    }
+
 }
