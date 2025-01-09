@@ -41,4 +41,10 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(updatedUser, "내 정보 수정 성공"));
     }
 
+    @DeleteMapping("/user/me")
+    public ResponseEntity<ApiResponse<Void>> withdrawUser() {
+        userService.withdrawUser();
+        return ResponseEntity.ok(ApiResponse.success(null, "회원 탈퇴 성공"));
+    }
+
 }

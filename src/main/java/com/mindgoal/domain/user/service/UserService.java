@@ -54,14 +54,14 @@ public class UserService {
         String accessToken = getKakaoAccessToken(code);
         KakaoUserInfo userInfo = getKakaoUserInfo(accessToken);
 
-        User user = userRepository.findByEmail(userInfo.getKakao_account().getEmail())
+        User user = userRepository.findByEmailAndIsDeletedFalse(userInfo.getKakao_account().getEmail())
                 .orElseGet(() -> createKakaoUser(userInfo));
         return new TokenDto(jwtTokenProvider.generateToken(user.getEmail()));
     }
 
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
@@ -96,7 +96,7 @@ public class UserService {
     public User createKakaoUser(KakaoUserInfo userInfo) {
         String email = userInfo.getKakao_account().getEmail();
 
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndIsDeletedFalse(email)
                 .map(existingUser -> {
                     // 기존 사용자의 kakaoId 업데이트 로직 필요시 추가
                     return existingUser;
@@ -117,6 +117,13 @@ public class UserService {
         User user = getCurrentUser();
         user.updateProfile(request.getName(), request.getProfileImage());
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public void withdrawUser() {
+        User user = getCurrentUser();
+        userRepository.delete(user);
+        SecurityContextHolder.clearContext();
     }
 
 }

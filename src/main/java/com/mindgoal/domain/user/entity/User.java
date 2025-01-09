@@ -2,6 +2,7 @@ package com.mindgoal.domain.user.entity;
 
 import com.mindgoal.common.BaseEntity;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +36,13 @@ public class User extends BaseEntity {
 
     @Column(name = "IS_AGREE_POLICY")
     private Boolean isAgreePolicy;
+
+    @Column(name = "IS_DELETED", nullable = false)
+    private boolean isDeleted = false;
+
+    @Column(name = "DELETED_AT")
+    private LocalDateTime deletedAt;
+
     @Builder
     public User(String email, String password, String name, String phoneNumber,
                 String profileImage, Boolean isAgreePolicy) {
@@ -44,6 +52,7 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.profileImage = profileImage;
         this.isAgreePolicy = isAgreePolicy;
+        this.isDeleted = false;
     }
 
     @Override
@@ -72,4 +81,8 @@ public class User extends BaseEntity {
         }
     }
 
+    public void withdraw() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
 }
