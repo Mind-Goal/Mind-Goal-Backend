@@ -62,4 +62,14 @@ public class User extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void updateProfile(String name, String profileImage) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (profileImage != null) {
+            this.profileImage = profileImage;
+        }
+    }
+
 }
