@@ -1,7 +1,6 @@
 package com.mindgoal.domain.user.controller;
 
-
-import com.mindgoal.domain.user.dto.ApiResponse;
+import com.mindgoal.common.BaseResponse;
 import com.mindgoal.domain.user.dto.KakaoLoginRequest;
 import com.mindgoal.domain.user.dto.TokenDto;
 import com.mindgoal.domain.user.dto.UpdateUserRequest;
@@ -19,32 +18,34 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/oauth/login")
-    public ResponseEntity<TokenDto> kakaoLogin(@RequestBody KakaoLoginRequest request) {
+    public ResponseEntity<BaseResponse<TokenDto>> kakaoLogin(@RequestBody KakaoLoginRequest request) {
         TokenDto token = userService.kakaoLogin(request.getCode());
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(BaseResponse.success(token, "카카오 로그인 성공"));
     }
 
     @PostMapping("/oauth/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
+    public ResponseEntity<BaseResponse<Void>> logout(HttpServletRequest request) {
         userService.logout(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success(null, "로그아웃 성공"));
     }
 
     @GetMapping("/user/me")
-    public ResponseEntity<User> getCurrentUser() {
+    public ResponseEntity<BaseResponse<User>> getCurrentUser() {
         User user = userService.getCurrentUser();
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(BaseResponse.success(user, "사용자 정보 조회 성공"));
     }
+
     @PutMapping("/user/me")
-    public ResponseEntity<ApiResponse<User>> updateMyInfo(@RequestBody @Valid UpdateUserRequest request) {
+    public ResponseEntity<BaseResponse<User>> updateMyInfo(@RequestBody @Valid UpdateUserRequest request) {
         User updatedUser = userService.updateUser(request);
-        return ResponseEntity.ok(ApiResponse.success(updatedUser, "내 정보 수정 성공"));
+        return ResponseEntity.ok(BaseResponse.success(updatedUser, "내 정보 수정 성공"));
     }
-
-    @DeleteMapping("/user/me")
-    public ResponseEntity<ApiResponse<Void>> withdrawUser() {
-        userService.withdrawUser();
-        return ResponseEntity.ok(ApiResponse.success(null, "회원 탈퇴 성공"));
+  
+    @Transactional
+    public void withdrawUser() {
+        User user = getCurrentUser();
+        user.withdraw(); // 실제 삭제 대신 상태만 변경
+        userRepository.save(user); // 변경된 상태를 저장
+        SecurityContextHolder.clearContext();
     }
-
 }
