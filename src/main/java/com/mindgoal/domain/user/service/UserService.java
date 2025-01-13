@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.mindgoal.domain.user.dto.KakaoUserInfo;
 import com.mindgoal.domain.user.dto.TokenDto;
+import com.mindgoal.domain.user.dto.UpdateUserRequest;
 import com.mindgoal.domain.user.entity.User;
 import com.mindgoal.domain.user.repository.UserRepository;
 import com.mindgoal.config.jwt.JwtTokenProvider;
@@ -110,4 +111,12 @@ public class UserService {
                             .build());
                 });
     }
+
+    @Transactional
+    public User updateUser(UpdateUserRequest request) {
+        User user = getCurrentUser();
+        user.updateProfile(request.getName(), request.getProfileImage());
+        return userRepository.save(user);
+    }
+
 }
