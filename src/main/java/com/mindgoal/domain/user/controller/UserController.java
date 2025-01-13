@@ -41,11 +41,4 @@ public class UserController {
         return ResponseEntity.ok(BaseResponse.success(updatedUser, "내 정보 수정 성공"));
     }
   
-    @Transactional
-    public void withdrawUser() {
-        User user = getCurrentUser();
-        user.withdraw(); // 실제 삭제 대신 상태만 변경
-        userRepository.save(user); // 변경된 상태를 저장
-        SecurityContextHolder.clearContext();
-    }
 }
