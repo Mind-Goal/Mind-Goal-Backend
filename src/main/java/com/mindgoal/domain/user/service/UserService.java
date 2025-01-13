@@ -122,8 +122,8 @@ public class UserService {
     @Transactional
     public void withdrawUser() {
         User user = getCurrentUser();
-        userRepository.delete(user);
+        user.withdraw(); // 실제 삭제 대신 상태만 변경
+        userRepository.save(user); // 변경된 상태를 저장
         SecurityContextHolder.clearContext();
     }
-
 }
