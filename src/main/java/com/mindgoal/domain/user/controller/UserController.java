@@ -40,5 +40,10 @@ public class UserController {
         User updatedUser = userService.updateUser(request);
         return ResponseEntity.ok(BaseResponse.success(updatedUser, "내 정보 수정 성공"));
     }
-  
+    
+    @DeleteMapping("/user/me")
+    public ResponseEntity<BaseResponse<Void>> withdrawUser() {
+        userService.withdrawUser();
+        return ResponseEntity.ok(BaseResponse.success(null, "회원 탈퇴 성공"));
+    }  
 }
