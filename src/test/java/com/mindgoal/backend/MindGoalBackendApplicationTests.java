@@ -72,7 +72,7 @@ class UserServiceTest {
 		when(authentication.getName()).thenReturn(email);
 		SecurityContextHolder.setContext(securityContext);
 
-		when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+		when(userRepository.findByEmailAndIsDeletedFalse(email)).thenReturn(Optional.of(existingUser));
 		when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
 		// when
@@ -81,7 +81,7 @@ class UserServiceTest {
 		// then
 		assertThat(updatedUser.getName()).isEqualTo(newName);
 		assertThat(updatedUser.getProfileImage()).isEqualTo(newProfileImage);
-		verify(userRepository).findByEmail(email);
+		verify(userRepository).findByEmailAndIsDeletedFalse(email);
 		verify(userRepository).save(any(User.class));
 	}
 
@@ -99,12 +99,12 @@ class UserServiceTest {
 		when(authentication.getName()).thenReturn(email);
 		SecurityContextHolder.setContext(securityContext);
 
-		when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+		when(userRepository.findByEmailAndIsDeletedFalse(email)).thenReturn(Optional.empty());
 
 		// when & then
 		assertThrows(UsernameNotFoundException.class,
 				() -> userService.updateUser(request));
-		verify(userRepository).findByEmail(email);
+		verify(userRepository).findByEmailAndIsDeletedFalse(email);
 		verify(userRepository, never()).save(any(User.class));
 	}
 }
