@@ -28,8 +28,8 @@ public class TestQuestion extends BaseEntity {
     @Column(name = "OPTIONS")
     private String option;
 
-    @Column(name = "QUESTION_SCORE")
-    private int questionScore;
+    @Column(name = "QUESTION_NUMBER")
+    private int questionNumber;
 
     @Override
     public boolean equals(Object object) {
