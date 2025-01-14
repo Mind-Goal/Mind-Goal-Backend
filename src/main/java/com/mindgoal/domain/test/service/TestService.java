@@ -1,1 +1,10 @@
-package com.mindgoal.domain.test.service; 
+package com.mindgoal.domain.test.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TestService {
+
+}
