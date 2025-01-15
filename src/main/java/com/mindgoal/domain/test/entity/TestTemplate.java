@@ -34,9 +34,6 @@ public class TestTemplate extends BaseEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "QUESTION_COUNT")
-    private int questionCount;
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {

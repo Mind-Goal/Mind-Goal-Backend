@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "TEST_QUESTIONS")
+@Table(name = "QUESTIONS")
 @Entity
 @Getter
 public class TestQuestion extends BaseEntity {
@@ -22,14 +22,11 @@ public class TestQuestion extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @Column(name = "TEMPLATE_ID", nullable = false)
+    private Long templateId;
+
     @Column(name = "QUESTION",nullable = false)
     private String question;
-
-    @Column(name = "OPTIONS")
-    private String option;
-
-    @Column(name = "QUESTION_NUMBER")
-    private int questionNumber;
 
     @Override
     public boolean equals(Object object) {
