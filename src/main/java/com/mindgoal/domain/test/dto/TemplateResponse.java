@@ -5,5 +5,10 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public record TemplateResponse(List<TestTemplate> templates) {
+public class TemplateResponse {
+    private final List<TestTemplate> templates;
+
+    public TemplateResponse(List<TestTemplate> templates) {
+        this.templates = templates;
+    }
 }
