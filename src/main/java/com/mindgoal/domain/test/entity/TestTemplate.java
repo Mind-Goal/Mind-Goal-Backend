@@ -34,6 +34,12 @@ public class TestTemplate extends BaseEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    public TestTemplate(TestType testType, String title, String description) {
+        this.testType = testType;
+        this.title = title;
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
