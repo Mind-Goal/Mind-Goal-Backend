@@ -1,6 +1,7 @@
 package com.mindgoal.backend.test.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mindgoal.backend.support.annotation.ServiceTest;
 import com.mindgoal.backend.support.fixture.TestTemplateFixture;
@@ -27,4 +28,8 @@ public class TestServiceTest {
     }
 
     @Test
+    void 테스트_템플릿이_존재하지_않을경우_예외_발생() {
+        assertThatThrownBy(() -> testService.findTestTemplates())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
