@@ -28,7 +28,7 @@ public class TestTemplate extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TestType testType;
 
-    @Column(name = "TITLE",nullable = false)
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
     @Column(name = "DESCRIPTION")

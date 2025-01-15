@@ -25,7 +25,7 @@ public class TestQuestion extends BaseEntity {
     @Column(name = "TEMPLATE_ID", nullable = false)
     private Long templateId;
 
-    @Column(name = "QUESTION",nullable = false)
+    @Column(name = "QUESTION", nullable = false)
     private String question;
 
     @Override

@@ -9,5 +9,5 @@ public enum TestType {
     RELATIONSHIP,      // 관계
     CAREER,            // 진로
     STUDY,             // 학업
-    LIFESTYLE          //생활
+    LIFESTYLE          // 생활
 }

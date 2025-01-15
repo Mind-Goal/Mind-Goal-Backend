@@ -1,11 +1,9 @@
 package com.mindgoal.domain.test.service;
 
 import com.mindgoal.domain.test.dto.TemplateResponse;
-import com.mindgoal.domain.test.entity.TestTemplate;
 import com.mindgoal.domain.test.repository.QuestionRepository;
 import com.mindgoal.domain.test.repository.TestResultRepository;
 import com.mindgoal.domain.test.repository.TestTemplateRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
