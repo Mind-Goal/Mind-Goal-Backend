@@ -32,8 +32,8 @@ public class TestResult extends BaseEntity {
     @Column(name = "SCORE")
     private int score;
 
-    @Column(name = "TEST_DATE")
-    private LocalDate testDate;
+    @Column(name = "RECEIVER_ID", nullable = false)
+    private Long receiverId;
 
     @Override
     public boolean equals(Object object) {

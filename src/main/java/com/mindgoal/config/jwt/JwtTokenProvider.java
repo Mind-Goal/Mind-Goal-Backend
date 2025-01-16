@@ -21,7 +21,7 @@ public class JwtTokenProvider {
     private static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24; // 24시간
     private static final String BEARER_PREFIX = "Bearer ";
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretkey) {
+    public JwtTokenProvider(@Value("${spring.security.jwt.secret}") String secretkey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -35,7 +35,7 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public boolean valideToken(String jwtToken){
+    public boolean validateToken(String jwtToken){
         try{
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(key)
