@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     private final TestService testService;
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<TemplateResponse> getAllTests() {
         TemplateResponse templateResponse = testService.findTestTemplates();
         return ResponseEntity.ok(templateResponse);
