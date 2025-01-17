@@ -7,9 +7,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 
 
@@ -47,11 +50,18 @@ public class JwtTokenProvider {
         }
     }
 
-    public Authentication getAuthentication(String jwtToken){
-        //유저 데이터 가져와서 비교
-        return null;
-    }
+    public Authentication getAuthentication(String jwtToken) {
 
+        String email = getUserName(jwtToken);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+
+        return new UsernamePasswordAuthenticationToken(
+                email,
+                null,
+                Collections.singleton(authority)
+        );
+    }
     private Claims createClaims(String userName){
         Claims claims = Jwts.claims();
         claims.setSubject(userName);
