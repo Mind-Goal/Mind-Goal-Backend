@@ -3,6 +3,8 @@ package com.mindgoal.domain.test.entity;
 import com.mindgoal.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,16 +25,20 @@ public class TestTemplate extends BaseEntity {
     private Long id;
 
     @Column(name = "TEST_TYPE")
-    private String testType;
+    @Enumerated(EnumType.STRING)
+    private TestType testType;
 
-    @Column(name = "TITLE",nullable = false)
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "QUESTION_COUNT")
-    private int questionCount;
+    public TestTemplate(TestType testType, String title, String description) {
+        this.testType = testType;
+        this.title = title;
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object object) {
