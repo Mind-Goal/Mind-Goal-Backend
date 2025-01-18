@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +22,9 @@ public class Expert extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
+
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;
 
     @Column(name = "CAREER_YEARS")
     private int careerYears;
@@ -43,8 +47,8 @@ public class Expert extends BaseEntity {
     @Column(name = "RATING")
     private double rating;
 
-    @Column(name = "IS_ACTIVE")
-    private Boolean isActive;
+    @Column(name = "IS_ACTIVE", nullable = false)
+    private boolean isActive = false;
 
     @Column(name = "CATEGORY")
     private String category;
@@ -64,11 +68,36 @@ public class Expert extends BaseEntity {
     @Column(name = "SPECIALITY")
     private String speciality;
 
-    @Column(name = "TEACHING_POSITION")
-    private String teachingPosition;
+    @Column(name = "TEACHING_METHOD")
+    private String teachingMethod;
 
     @Column(name = "YOUTUBE_URL")
     private String youtubeUrl;
+
+    @Builder
+    public Expert(Long userId,String category, String speciality, String position,
+                  int careerYears, String description, String careerHistory,
+                  String teachingMethod, int pricePerHour, String youtubeUrl,
+                  String instagramUrl, Boolean isActive, double rating, int matchCount,
+                  int physicalScore, int techScore, int mentalScore) {
+        this.userId = userId;
+        this.category = category;
+        this.speciality = speciality;
+        this.position = position;
+        this.careerYears = careerYears;
+        this.description = description;
+        this.careerHistory = careerHistory;
+        this.teachingMethod = teachingMethod;
+        this.pricePerHour = pricePerHour;
+        this.youtubeUrl = youtubeUrl;
+        this.instagramUrl = instagramUrl;
+        this.isActive = (isActive != null) ? isActive : false;
+        this.rating = rating;
+        this.matchCount = matchCount;
+        this.physicalScore = physicalScore;
+        this.techScore = techScore;
+        this.mentalScore = mentalScore;
+    }
 
     @Override
     public boolean equals(Object object) {
