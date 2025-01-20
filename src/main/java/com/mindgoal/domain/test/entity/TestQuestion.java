@@ -28,6 +28,11 @@ public class TestQuestion extends BaseEntity {
     @Column(name = "QUESTION", nullable = false)
     private String question;
 
+    public TestQuestion(Long templateId, String question) {
+        this.templateId = templateId;
+        this.question = question;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
