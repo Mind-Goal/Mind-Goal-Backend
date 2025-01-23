@@ -19,6 +19,9 @@ public class ExpertCreateRequest {
     @NotBlank(message = "포지션은 필수입니다")
     private String position;
 
+    @NotBlank(message = "활동 지역은 필수입니다")
+    private String region;
+
     @Positive(message = "경력 연수는 양수여야 합니다")
     private int careerYears;
 
@@ -37,12 +40,14 @@ public class ExpertCreateRequest {
 
     @Builder
     public ExpertCreateRequest(String category, String speciality,
-                               String position, int careerYears, String description,
-                               String careerHistory, String teachingMethod, int pricePerHour,
+                               String position, String region, int careerYears,
+                               String description, String careerHistory,
+                               String teachingMethod, int pricePerHour,
                                String youtubeUrl, String instagramUrl) {
         this.category = category;
         this.speciality = speciality;
         this.position = position;
+        this.region = region;
         this.careerYears = careerYears;
         this.description = description;
         this.careerHistory = careerHistory;

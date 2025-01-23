@@ -126,4 +126,12 @@ public class UserService {
         userRepository.save(user); // 변경된 상태를 저장
         SecurityContextHolder.clearContext();
     }
+
+    @Transactional(readOnly = true)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .filter(user -> !user.isDeleted())  // isDeleted가 false인 사용자만 필터링
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+
 }

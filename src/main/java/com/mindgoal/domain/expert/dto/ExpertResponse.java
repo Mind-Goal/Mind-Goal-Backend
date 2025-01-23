@@ -10,6 +10,7 @@ public class ExpertResponse {
     private final String category;
     private final String speciality;
     private final String position;
+    private final String region;
     private final double rating;
     private final int matchCount;
     private final boolean isActive;
@@ -19,12 +20,14 @@ public class ExpertResponse {
 
     @Builder
     private ExpertResponse(Long id, String category, String speciality,
-                           String position, double rating, int matchCount, boolean isActive,
+                           String position, String region, double rating,
+                           int matchCount, boolean isActive,
                            int physicalScore, int techScore, int mentalScore) {
         this.id = id;
         this.category = category;
         this.speciality = speciality;
         this.position = position;
+        this.region = region;
         this.rating = rating;
         this.matchCount = matchCount;
         this.isActive = isActive;
@@ -39,6 +42,7 @@ public class ExpertResponse {
                 .category(expert.getCategory())
                 .speciality(expert.getSpeciality())
                 .position(expert.getPosition())
+                .region(expert.getRegion())
                 .rating(expert.getRating())
                 .matchCount(expert.getMatchCount())
                 .isActive(expert.isActive())
@@ -47,6 +51,4 @@ public class ExpertResponse {
                 .mentalScore(expert.getMentalScore())
                 .build();
     }
-
-
 }

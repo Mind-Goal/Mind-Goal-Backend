@@ -2,13 +2,17 @@ package com.mindgoal.domain.expert.service;
 
 import com.mindgoal.common.BaseResponseStatus;
 import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
+import com.mindgoal.domain.expert.dto.ExpertListResponse;
 import com.mindgoal.domain.expert.dto.ExpertResponse;
+import com.mindgoal.domain.expert.dto.ExpertSearchCondition;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
 import com.mindgoal.domain.user.entity.User;
 import com.mindgoal.domain.user.service.UserService;
 import com.mindgoal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +35,33 @@ public class ExpertService {
         return ExpertResponse.from(savedExpert);
     }
 
+    @Transactional(readOnly = true)
     public Expert getExpert(Long id) {
         return expertRepository.findById(id)
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ExpertListResponse> searchExperts(ExpertSearchCondition condition, Pageable pageable) {
+        Page<Expert> experts = expertRepository.findAllByFilters(condition, pageable);
+
+        return experts.map(expert -> {
+            User user = userService.getUser(expert.getUserId());
+            return ExpertListResponse.builder()
+                    .id(expert.getId())
+                    .name(user.getName())
+                    .category(expert.getCategory())
+                    .position(expert.getPosition())
+                    .specialty(expert.getSpeciality())
+                    .region(expert.getRegion())
+                    .careerYears(expert.getCareerYears())
+                    .rating(expert.getRating())
+                    .matchCount(expert.getMatchCount())
+                    .technical(expert.getTechScore())
+                    .physical(expert.getPhysicalScore())
+                    .mental(expert.getMentalScore())
+                    .build();
+        });
     }
 
     private Expert createExpertEntity(User user, ExpertCreateRequest request) {
@@ -42,6 +70,7 @@ public class ExpertService {
                 .category(request.getCategory())
                 .speciality(request.getSpeciality())
                 .position(request.getPosition())
+                .region(request.getRegion())
                 .careerYears(request.getCareerYears())
                 .description(request.getDescription())
                 .careerHistory(request.getCareerHistory())
@@ -50,6 +79,11 @@ public class ExpertService {
                 .youtubeUrl(request.getYoutubeUrl())
                 .instagramUrl(request.getInstagramUrl())
                 .isActive(true)
+                .rating(0.0)
+                .matchCount(0)
+                .physicalScore(0)
+                .techScore(0)
+                .mentalScore(0)
                 .build();
     }
 }

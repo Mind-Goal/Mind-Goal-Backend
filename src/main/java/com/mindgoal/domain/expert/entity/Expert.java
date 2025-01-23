@@ -65,6 +65,9 @@ public class Expert extends BaseEntity {
     @Column(name = "POSITION")
     private String position;
 
+    @Column(name = "REGION", nullable = false)
+    private String region;
+
     @Column(name = "SPECIALITY")
     private String speciality;
 
@@ -75,8 +78,8 @@ public class Expert extends BaseEntity {
     private String youtubeUrl;
 
     @Builder
-    public Expert(Long userId,String category, String speciality, String position,
-                  int careerYears, String description, String careerHistory,
+    public Expert(Long userId, String category, String speciality, String position,
+                  String region, int careerYears, String description, String careerHistory,
                   String teachingMethod, int pricePerHour, String youtubeUrl,
                   String instagramUrl, Boolean isActive, double rating, int matchCount,
                   int physicalScore, int techScore, int mentalScore) {
@@ -84,6 +87,7 @@ public class Expert extends BaseEntity {
         this.category = category;
         this.speciality = speciality;
         this.position = position;
+        this.region = region;
         this.careerYears = careerYears;
         this.description = description;
         this.careerHistory = careerHistory;
