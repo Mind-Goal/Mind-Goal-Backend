@@ -42,8 +42,11 @@ class ExpertServiceTest {
     @BeforeEach
     void setUp() {
         SecurityContextHolder.clearContext();
+<<<<<<< HEAD
         expertRepository.deleteAll();
         userRepository.deleteAll();
+=======
+>>>>>>> deploy
     }
 
     @DisplayName("전문가 등록 성공")
@@ -63,7 +66,10 @@ class ExpertServiceTest {
                     assertThat(expertResponse.getCategory()).isEqualTo("TECHNICAL");
                     assertThat(expertResponse.getSpeciality()).isEqualTo("축구 기술 트레이닝");
                     assertThat(expertResponse.getPosition()).isEqualTo("공격수");
+<<<<<<< HEAD
                     assertThat(expertResponse.getRegion()).isEqualTo("서울");
+=======
+>>>>>>> deploy
                     assertThat(expertResponse.getRating()).isEqualTo(0.0);
                     assertThat(expertResponse.getMatchCount()).isEqualTo(0);
                     assertThat(expertResponse.isActive()).isTrue();
@@ -80,7 +86,10 @@ class ExpertServiceTest {
                     assertThat(expert.getCategory()).isEqualTo("TECHNICAL");
                     assertThat(expert.getSpeciality()).isEqualTo("축구 기술 트레이닝");
                     assertThat(expert.getPosition()).isEqualTo("공격수");
+<<<<<<< HEAD
                     assertThat(expert.getRegion()).isEqualTo("서울");
+=======
+>>>>>>> deploy
                     assertThat(expert.getCareerYears()).isEqualTo(5);
                 });
     }
@@ -133,7 +142,10 @@ class ExpertServiceTest {
                 .email(email)
                 .password("password1234")
                 .name(name)
+<<<<<<< HEAD
                 .isAgreePolicy(true)
+=======
+>>>>>>> deploy
                 .build();
         return userRepository.save(user);
     }
@@ -144,7 +156,10 @@ class ExpertServiceTest {
                 .category("TECHNICAL")
                 .speciality("축구 기술 트레이닝")
                 .position("공격수")
+<<<<<<< HEAD
                 .region("서울")
+=======
+>>>>>>> deploy
                 .careerYears(5)
                 .description("전문가 설명")
                 .careerHistory("경력 사항")
@@ -165,7 +180,10 @@ class ExpertServiceTest {
                 .category("TECHNICAL")
                 .speciality("축구 기술 트레이닝")
                 .position("공격수")
+<<<<<<< HEAD
                 .region("서울")
+=======
+>>>>>>> deploy
                 .careerYears(5)
                 .description("10년 이상의 축구 선수 경력")
                 .careerHistory("프로팀 경력 5년")

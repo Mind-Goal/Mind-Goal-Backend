@@ -1,5 +1,6 @@
 package com.mindgoal.domain.expert.service;
 
+import com.mindgoal.common.BaseResponseStatus;
 import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
 import com.mindgoal.domain.expert.dto.ExpertListResponse;
 import com.mindgoal.domain.expert.dto.ExpertResponse;
@@ -8,6 +9,7 @@ import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
 import com.mindgoal.domain.user.entity.User;
 import com.mindgoal.domain.user.service.UserService;
+import com.mindgoal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExpertService {
     private final ExpertRepository expertRepository;
@@ -26,34 +27,21 @@ public class ExpertService {
         User currentUser = userService.getCurrentUser();
 
         if (expertRepository.existsByUserId(currentUser.getId())) {
-            throw new IllegalArgumentException("이미 등록된 전문가입니다.");
+            throw new CustomException(BaseResponseStatus.EXPERT_ALREADY_EXISTS);
         }
 
-        Expert expert = Expert.builder()
-                .userId(currentUser.getId())
-                .category(request.getCategory())
-                .speciality(request.getSpeciality())
-                .position(request.getPosition())
-                .region(request.getRegion())
-                .careerYears(request.getCareerYears())
-                .description(request.getDescription())
-                .careerHistory(request.getCareerHistory())
-                .teachingMethod(request.getTeachingMethod())
-                .pricePerHour(request.getPricePerHour())
-                .youtubeUrl(request.getYoutubeUrl())
-                .instagramUrl(request.getInstagramUrl())
-                .isActive(true)
-                .rating(0.0)
-                .matchCount(0)
-                .physicalScore(0)
-                .techScore(0)
-                .mentalScore(0)
-                .build();
-
+        Expert expert = createExpertEntity(currentUser, request);
         Expert savedExpert = expertRepository.save(expert);
         return ExpertResponse.from(savedExpert);
     }
 
+    @Transactional(readOnly = true)
+    public Expert getExpert(Long id) {
+        return expertRepository.findById(id)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
     public Page<ExpertListResponse> searchExperts(ExpertSearchCondition condition, Pageable pageable) {
         Page<Expert> experts = expertRepository.findAllByFilters(condition, pageable);
 
@@ -74,5 +62,28 @@ public class ExpertService {
                     .mental(expert.getMentalScore())
                     .build();
         });
+    }
+
+    private Expert createExpertEntity(User user, ExpertCreateRequest request) {
+        return Expert.builder()
+                .userId(user.getId())
+                .category(request.getCategory())
+                .speciality(request.getSpeciality())
+                .position(request.getPosition())
+                .region(request.getRegion())
+                .careerYears(request.getCareerYears())
+                .description(request.getDescription())
+                .careerHistory(request.getCareerHistory())
+                .teachingMethod(request.getTeachingMethod())
+                .pricePerHour(request.getPricePerHour())
+                .youtubeUrl(request.getYoutubeUrl())
+                .instagramUrl(request.getInstagramUrl())
+                .isActive(true)
+                .rating(0.0)
+                .matchCount(0)
+                .physicalScore(0)
+                .techScore(0)
+                .mentalScore(0)
+                .build();
     }
 }
