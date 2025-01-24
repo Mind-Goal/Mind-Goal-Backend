@@ -16,17 +16,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "CHAT_MESSAGES")
 @Entity
 @Getter
-public class Message extends BaseEntity {
+public class ChatMessage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @Column
+    private Long senderId;
+
+    @Column
+    private Long chatRoomId;
+
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
     @Column(name = "READ_COUNT")
-    private int readCount;
+    private boolean readYN;
 
     @Override
     public boolean equals(Object object) {
@@ -36,7 +42,7 @@ public class Message extends BaseEntity {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Message message = (Message) object;
+        ChatMessage message = (ChatMessage) object;
         return Objects.equals(id, message.id);
     }
 
