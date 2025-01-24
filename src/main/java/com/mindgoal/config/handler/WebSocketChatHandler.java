@@ -15,7 +15,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @Component
 @RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
-    private final ObjectMapper mapper;
 
     // 소켓 세션을 저장할 Set
     private final Set<WebSocketSession> sessions = new HashSet<>();
@@ -35,7 +34,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         log.info("payload {}", payload);
 
-        for (WebSocketSession s : sessions){
+        for (WebSocketSession s : sessions) {
             s.sendMessage(new TextMessage(payload));
         }
     }
