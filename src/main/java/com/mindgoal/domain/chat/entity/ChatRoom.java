@@ -2,6 +2,7 @@ package com.mindgoal.domain.chat.entity;
 
 import com.mindgoal.common.BaseEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CHAT_ROOMS")
@@ -23,11 +25,14 @@ public class ChatRoom extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "LAST_MESSAGE_AT")
-    private LocalDate lastMessageAt;
+    @Column
+    private Long expertId;
 
-    @Column(name = "IS_ACTIVE")
-    private Boolean isActive;
+    @Column
+    private Long userId;
+
+    @Embedded
+    private ChatRoomStatus chatRoomStatus;
 
     @Override
     public boolean equals(Object object) {
