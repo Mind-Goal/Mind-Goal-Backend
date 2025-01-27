@@ -2,10 +2,7 @@ package com.mindgoal.domain.expert.controller;
 
 import com.mindgoal.common.BaseResponse;
 import com.mindgoal.common.BaseResponseStatus;
-import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
-import com.mindgoal.domain.expert.dto.ExpertListResponse;
-import com.mindgoal.domain.expert.dto.ExpertResponse;
-import com.mindgoal.domain.expert.dto.ExpertSearchCondition;
+import com.mindgoal.domain.expert.dto.*;
 import com.mindgoal.domain.expert.service.ExpertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,4 +55,16 @@ public class ExpertController {
         Page<ExpertListResponse> response = expertService.searchExperts(condition, pageable);
         return ResponseEntity.ok(BaseResponse.success(response, "전문가 목록 조회 성공"));
     }
+
+    @GetMapping("/{Id}")
+    public ResponseEntity<BaseResponse<ExpertDetailResponse>> getExpertDetail(
+            @PathVariable Long expertId) {
+        ExpertDetailResponse response = expertService.getExpertDetail(expertId);
+        return ResponseEntity.ok(
+                BaseResponse.success(response, BaseResponseStatus.EXPERT_DETAIL_SUCCESS.getMessage())
+        );
+
+    }
+
 }
+

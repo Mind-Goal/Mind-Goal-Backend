@@ -1,10 +1,7 @@
 package com.mindgoal.domain.expert.service;
 
 import com.mindgoal.common.BaseResponseStatus;
-import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
-import com.mindgoal.domain.expert.dto.ExpertListResponse;
-import com.mindgoal.domain.expert.dto.ExpertResponse;
-import com.mindgoal.domain.expert.dto.ExpertSearchCondition;
+import com.mindgoal.domain.expert.dto.*;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
 import com.mindgoal.domain.user.entity.User;
@@ -86,4 +83,13 @@ public class ExpertService {
                 .mentalScore(0)
                 .build();
     }
+    @Transactional(readOnly = true)
+    public ExpertDetailResponse getExpertDetail(Long expertId) {
+        Expert expert = expertRepository.findById(expertId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+
+        User user = userService.getUser(expert.getUserId());
+        return ExpertDetailResponse.from(expert, user.getName());
+    }
+
 }
