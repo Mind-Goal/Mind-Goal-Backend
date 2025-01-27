@@ -26,7 +26,7 @@ public class ExpertController {
         ExpertResponse response = expertService.register(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(BaseResponse.success(response, BaseResponseStatus.EXPERT_REGISTER_SUCCESS.getMessage()));  // 응답 메시지 통일
+                .body(BaseResponse.success(response, BaseResponseStatus.EXPERT_REGISTER_SUCCESS.getMessage()));
     }
 
     @GetMapping
@@ -63,8 +63,15 @@ public class ExpertController {
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.EXPERT_DETAIL_SUCCESS.getMessage())
         );
-
     }
 
+    @PutMapping("/{Id}")
+    public ResponseEntity<BaseResponse<ExpertUpdateResponse>> updateExpert(
+            @PathVariable Long expertId,
+            @RequestBody @Valid ExpertUpdateRequest request) {
+        ExpertUpdateResponse response = expertService.updateExpert(expertId, request);
+        return ResponseEntity.ok(
+                BaseResponse.success(response, BaseResponseStatus.EXPERT_UPDATE_SUCCESS.getMessage())
+        );
+    }
 }
-

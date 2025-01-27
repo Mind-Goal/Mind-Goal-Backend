@@ -61,6 +61,39 @@ public class ExpertService {
         });
     }
 
+    @Transactional(readOnly = true)
+    public ExpertDetailResponse getExpertDetail(Long expertId) {
+        Expert expert = expertRepository.findById(expertId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+
+        User user = userService.getUser(expert.getUserId());
+        return ExpertDetailResponse.from(expert, user.getName());
+    }
+
+    @Transactional
+    public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request) {
+        Expert expert = getExpert(expertId);
+        User currentUser = userService.getCurrentUser();
+
+        // Verify if the current user owns this expert profile
+        if (!expert.getUserId().equals(currentUser.getId())) {
+            throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
+        }
+
+        expert.update(
+                request.getSpecialty(),
+                request.getPosition(),
+                request.getDescription(),
+                request.getCareerHistory(),
+                request.getTeachingMethod(),
+                request.getPricePerHour(),
+                request.getYoutubeUrl(),
+                request.getInstagramUrl()
+        );
+
+        return ExpertUpdateResponse.from(expert);
+    }
+
     private Expert createExpertEntity(User user, ExpertCreateRequest request) {
         return Expert.builder()
                 .userId(user.getId())
@@ -83,13 +116,4 @@ public class ExpertService {
                 .mentalScore(0)
                 .build();
     }
-    @Transactional(readOnly = true)
-    public ExpertDetailResponse getExpertDetail(Long expertId) {
-        Expert expert = expertRepository.findById(expertId)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
-
-        User user = userService.getUser(expert.getUserId());
-        return ExpertDetailResponse.from(expert, user.getName());
-    }
-
 }
