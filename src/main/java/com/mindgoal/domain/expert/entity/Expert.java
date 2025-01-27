@@ -103,6 +103,26 @@ public class Expert extends BaseEntity {
         this.mentalScore = mentalScore;
     }
 
+    public void update(
+            String specialty,
+            String position,
+            String description,
+            String careerHistory,
+            String teachingMethod,
+            Integer pricePerHour,
+            String youtubeUrl,
+            String instagramUrl
+    ) {
+        if (specialty != null) this.speciality = specialty;
+        if (position != null) this.position = position;
+        if (description != null) this.description = description;
+        if (careerHistory != null) this.careerHistory = careerHistory;
+        if (teachingMethod != null) this.teachingMethod = teachingMethod;
+        if (pricePerHour != null) this.pricePerHour = pricePerHour;
+        if (youtubeUrl != null) this.youtubeUrl = youtubeUrl;
+        if (instagramUrl != null) this.instagramUrl = instagramUrl;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
