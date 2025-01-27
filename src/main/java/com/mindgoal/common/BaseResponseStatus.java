@@ -7,6 +7,7 @@ public enum BaseResponseStatus {
     // 200번대: 성공 응답
     SUCCESS(true, 200, "요청이 성공했습니다"),
     EXPERT_REGISTER_SUCCESS(true, 201, "전문가 등록이 성공했습니다"),
+    EXPERT_DETAIL_SUCCESS(true, 200, "전문가 상세 조회에 성공하였습니다"),
 
     // 400번대: Request 오류
     BAD_REQUEST(false, 400, "잘못된 요청입니다"),
