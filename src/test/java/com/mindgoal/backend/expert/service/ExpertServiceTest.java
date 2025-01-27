@@ -1,9 +1,7 @@
 package com.mindgoal.backend.expert.service;
 
 import com.mindgoal.backend.support.annotation.ServiceTest;
-import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
-import com.mindgoal.domain.expert.dto.ExpertDetailResponse;
-import com.mindgoal.domain.expert.dto.ExpertResponse;
+import com.mindgoal.domain.expert.dto.*;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
 import com.mindgoal.domain.expert.service.ExpertService;
@@ -247,5 +245,121 @@ class ExpertServiceTest {
                 .teachingMethod("1:1 맞춤형 기술 훈련")
                 .pricePerHour(50000)
                 .build();
+    }
+    @DisplayName("전문가 정보 수정 성공")
+    @Test
+    void updateExpert_Success() {
+        // given
+        User user = createUser("test@example.com", "testUser");
+        setSecurityContext(user.getEmail());
+        Expert expert = createExpert(user.getId());
+
+        ExpertUpdateRequest request = ExpertUpdateRequest.builder()
+                .specialty("수정된 전문 분야")
+                .position("수정된 포지션")
+                .description("수정된 설명")
+                .careerHistory("수정된 경력")
+                .teachingMethod("수정된 교육방식")
+                .pricePerHour(60000)
+                .youtubeUrl("https://youtube.com/updated")
+                .instagramUrl("https://instagram.com/updated")
+                .build();
+
+        // when
+        ExpertUpdateResponse response = expertService.updateExpert(expert.getId(), request);
+
+        // then
+        Expert updatedExpert = expertRepository.findById(expert.getId())
+                .orElseThrow(() -> new AssertionError("Expert should exist"));
+
+        assertThat(updatedExpert)
+                .satisfies(e -> {
+                    assertThat(e.getSpeciality()).isEqualTo("수정된 전문 분야");
+                    assertThat(e.getPosition()).isEqualTo("수정된 포지션");
+                    assertThat(e.getDescription()).isEqualTo("수정된 설명");
+                    assertThat(e.getCareerHistory()).isEqualTo("수정된 경력");
+                    assertThat(e.getTeachingMethod()).isEqualTo("수정된 교육방식");
+                    assertThat(e.getPricePerHour()).isEqualTo(60000);
+                    assertThat(e.getYoutubeUrl()).isEqualTo("https://youtube.com/updated");
+                    assertThat(e.getInstagramUrl()).isEqualTo("https://instagram.com/updated");
+                });
+
+        assertThat(response)
+                .satisfies(r -> {
+                    assertThat(r.getId()).isEqualTo(expert.getId());
+                    assertThat(r.getUpdatedAt()).isNotNull();
+                });
+    }
+
+    @DisplayName("전문가 정보 부분 수정 성공")
+    @Test
+    void updateExpert_PartialUpdate_Success() {
+        // given
+        User user = createUser("test@example.com", "testUser");
+        setSecurityContext(user.getEmail());
+        Expert expert = createExpert(user.getId());
+
+        ExpertUpdateRequest request = ExpertUpdateRequest.builder()
+                .specialty("수정된 전문 분야")
+                .pricePerHour(60000)
+                .build();
+
+        // when
+        ExpertUpdateResponse response = expertService.updateExpert(expert.getId(), request);
+
+        // then
+        Expert updatedExpert = expertRepository.findById(expert.getId())
+                .orElseThrow(() -> new AssertionError("Expert should exist"));
+
+        assertThat(updatedExpert)
+                .satisfies(e -> {
+                    // 수정된 필드
+                    assertThat(e.getSpeciality()).isEqualTo("수정된 전문 분야");
+                    assertThat(e.getPricePerHour()).isEqualTo(60000);
+
+                    // 기존 값이 유지되어야 하는 필드들
+                    assertThat(e.getPosition()).isEqualTo("공격수");
+                    assertThat(e.getDescription()).isEqualTo("전문가 설명");
+                    assertThat(e.getCareerHistory()).isEqualTo("경력 사항");
+                    assertThat(e.getTeachingMethod()).isEqualTo("교육 방식");
+                });
+
+        assertThat(response.getId()).isEqualTo(expert.getId());
+    }
+
+    @DisplayName("존재하지 않는 전문가 정보 수정 실패")
+    @Test
+    void updateExpert_NotFound_ThrowsException() {
+        // given
+        User user = createUser("test@example.com", "testUser");
+        setSecurityContext(user.getEmail());
+        Long nonExistentExpertId = 999L;
+
+        ExpertUpdateRequest request = ExpertUpdateRequest.builder()
+                .specialty("수정된 전문 분야")
+                .build();
+
+        // when & then
+        assertThrows(CustomException.class,
+                () -> expertService.updateExpert(nonExistentExpertId, request));
+    }
+
+    @DisplayName("권한 없는 사용자의 전문가 정보 수정 실패")
+    @Test
+    void updateExpert_UnauthorizedAccess_ThrowsException() {
+        // given
+        User owner = createUser("owner@example.com", "owner");
+        User other = createUser("other@example.com", "other");
+        Expert expert = createExpert(owner.getId());
+
+        setSecurityContext(other.getEmail());
+
+        ExpertUpdateRequest request = ExpertUpdateRequest.builder()
+                .specialty("수정된 전문 분야")
+                .build();
+
+        // when & then
+        assertThrows(CustomException.class,
+                () -> expertService.updateExpert(expert.getId(), request));
     }
 }
