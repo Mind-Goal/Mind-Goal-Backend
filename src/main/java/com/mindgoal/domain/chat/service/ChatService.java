@@ -6,6 +6,7 @@ import com.mindgoal.domain.chat.entity.ChatRoom;
 import com.mindgoal.domain.chat.entity.ChatRoomStatus;
 import com.mindgoal.domain.chat.repository.ChatMessageRepository;
 import com.mindgoal.domain.chat.repository.ChatRoomRepository;
+import com.mindgoal.domain.user.entity.User;
 import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +21,20 @@ public class ChatService {
 
     @Transactional
     public ChatRoomResponse saveChatRoom(final ChatRoomRequest chatRoomRequest,
-                                         final PrincipalDetails user) {
-        final ChatRoom chatRoom = createChatRoom(chatRoomRequest, user);
+                                         final Long userId) {
+        final ChatRoom chatRoom = createChatRoom(chatRoomRequest, userId);
         return ChatRoomResponse.from(chatRoom);
     }
 
     private void validateExisted(final Long expertId, final Long userId) {
-        if (chatRoomRepository.findByExpertIdAndUserId(expertId, userId).isPresent()) {
+        if (chatRoomRepository.existsByExpertIdAndUserId(expertId, userId)) {
             throw new IllegalArgumentException("already exist");
         }
     }
 
-    private ChatRoom createChatRoom(final ChatRoomRequest chatRoomRequest, final PrincipalDetails user) {
-        validateExisted(chatRoomRequest.getExpertId(), user.getId());
-        final ChatRoomStatus chatRoomStatus = new ChatRoomStatus(0L, LocalDate.now(),true);
-        return new ChatRoom(chatRoomRequest.getExpertId(), user.getId(), chatRoomStatus);
+    private ChatRoom createChatRoom(final ChatRoomRequest chatRoomRequest, final Long userId) {
+        validateExisted(chatRoomRequest.getExpertId(), userId);
+        final ChatRoomStatus chatRoomStatus = new ChatRoomStatus(0L, LocalDate.now(), true);
+        return new ChatRoom(chatRoomRequest.getExpertId(), userId, chatRoomStatus);
     }
 }

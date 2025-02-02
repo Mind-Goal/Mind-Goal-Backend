@@ -1,4 +1,4 @@
-package com.mindgoal.backend.support.fixture;
+package com.mindgoal.backend.support.fixture.test;
 
 import com.mindgoal.domain.test.entity.TestQuestion;
 

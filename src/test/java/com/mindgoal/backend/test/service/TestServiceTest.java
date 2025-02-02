@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mindgoal.backend.support.annotation.ServiceTest;
-import com.mindgoal.backend.support.fixture.TestQuestionFixture;
-import com.mindgoal.backend.support.fixture.TestTemplateFixture;
+import com.mindgoal.backend.support.fixture.test.TestQuestionFixture;
+import com.mindgoal.backend.support.fixture.test.TestTemplateFixture;
 import com.mindgoal.domain.test.entity.TestTemplate;
 import com.mindgoal.domain.test.repository.QuestionRepository;
 import com.mindgoal.domain.test.repository.TestTemplateRepository;

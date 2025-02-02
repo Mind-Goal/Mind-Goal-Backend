@@ -21,7 +21,7 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ChatRoomResponse> createChatRoom(@RequestBody ChatRoomRequest chatRoomRequest,
                                                            @AuthenticationPrincipal PrincipalDetails user) {
-        final ChatRoomResponse chatRoomResponse = chatService.saveChatRoom(chatRoomRequest, user);
+        final ChatRoomResponse chatRoomResponse = chatService.saveChatRoom(chatRoomRequest, user.getId());
         return ResponseEntity.ok(chatRoomResponse);
     }
 }

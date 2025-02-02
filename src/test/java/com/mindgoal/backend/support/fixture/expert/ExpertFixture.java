@@ -1,10 +1,11 @@
-package com.mindgoal.backend.support.fixture;
+package com.mindgoal.backend.support.fixture.expert;
 
 import com.mindgoal.domain.expert.entity.Expert;
 
 public class ExpertFixture {
     public static Expert 심리_전문가() {
         return new Expert(
+                1L,
                 10,
                 200,
                 70,
@@ -26,6 +27,7 @@ public class ExpertFixture {
 
     public static Expert 진로_전문가() {
         return new Expert(
+                2L,
                 8,
                 150,
                 60,

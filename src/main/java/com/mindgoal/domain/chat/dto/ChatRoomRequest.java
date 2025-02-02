@@ -4,6 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class ChatRoomRequest {
-    private Long expertId;
-    private String profile_image;
+    private final Long expertId;
+    private final String profile_image;
+
+    public ChatRoomRequest(Long id, String profile_image) {
+        this.expertId = id;
+        this.profile_image = profile_image;
+    }
 }
