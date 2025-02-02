@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -21,4 +22,11 @@ public class ChatRoomStatus {
 
     @Column(name = "IS_ACTIVE")
     private Boolean isActive;
+
+    @Builder
+    public ChatRoomStatus(final Long headCount, final LocalDate lastMessageAt, final Boolean isActive) {
+        this.headCount = headCount;
+        this.lastMessageAt = lastMessageAt;
+        this.isActive = isActive;
+    }
 }

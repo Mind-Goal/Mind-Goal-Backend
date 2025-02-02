@@ -11,9 +11,9 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CHAT_ROOMS")
@@ -33,6 +33,30 @@ public class ChatRoom extends BaseEntity {
 
     @Embedded
     private ChatRoomStatus chatRoomStatus;
+
+    @Builder
+    private ChatRoom(final Long id, final Long expertId, final Long userId, final ChatRoomStatus chatRoomStatus) {
+        this.id = id;
+        this.expertId = expertId;
+        this.userId = userId;
+        this.chatRoomStatus = chatRoomStatus;
+    }
+
+    public ChatRoom(final Long expertId, final Long userId, final ChatRoomStatus chatRoomStatus) {
+        this(null, expertId, userId, chatRoomStatus);
+    }
+
+    public Long getHeadCount() {
+        return chatRoomStatus.getHeadCount();
+    }
+
+    public LocalDate getLastMessageAt() {
+        return chatRoomStatus.getLastMessageAt();
+    }
+
+    public boolean getIsActive() {
+        return chatRoomStatus.getIsActive();
+    }
 
     @Override
     public boolean equals(Object object) {
