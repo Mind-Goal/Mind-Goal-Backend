@@ -3,7 +3,6 @@ package com.mindgoal.domain.user.entity.auth;
 import com.mindgoal.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,16 +51,5 @@ public class PrincipalDetails implements UserDetails /*, OAuth2User*/ {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    // @AuthenticationPrincipal 사용을 위한 implement, jwt 인증에선 사용하지 않음 (email로 인증)
-    @Override
-    public Map<String, Object> getAttributes() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 }
