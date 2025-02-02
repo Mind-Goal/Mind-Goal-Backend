@@ -70,6 +70,27 @@ public class Expert extends BaseEntity {
     @Column(name = "YOUTUBE_URL")
     private String youtubeUrl;
 
+    public Expert(int careerYears, int matchCount, int physicalScore, int pricePerHour, int techScore, int mentalScore,
+                  double rating, Boolean isActive, String category, String careerHistory, String description,
+                  String instagramUrl, String position, String speciality, String teachingPosition, String youtubeUrl) {
+        this.careerYears = careerYears;
+        this.matchCount = matchCount;
+        this.physicalScore = physicalScore;
+        this.pricePerHour = pricePerHour;
+        this.techScore = techScore;
+        this.mentalScore = mentalScore;
+        this.rating = rating;
+        this.isActive = isActive;
+        this.category = category;
+        this.careerHistory = careerHistory;
+        this.description = description;
+        this.instagramUrl = instagramUrl;
+        this.position = position;
+        this.speciality = speciality;
+        this.teachingPosition = teachingPosition;
+        this.youtubeUrl = youtubeUrl;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
