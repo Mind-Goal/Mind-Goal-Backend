@@ -10,4 +10,12 @@ public class UserFixture {
     public static User 동의한_유저() {
         return new User(2L,"email@naver.com", "password22", "ocean", "010-0000-2222", "https://images", true);
     }
+
+    public static User 심리_전문가() {
+        return new User(3L,"email@naver.com", "password22", "ocean", "010-0000-2222", "https://images", true);
+    }
+
+    public static User 진로_전문가() {
+        return new User(4L,"email@naver.com", "password22", "ocean", "010-0000-2222", "https://images", true);
+    }
 }

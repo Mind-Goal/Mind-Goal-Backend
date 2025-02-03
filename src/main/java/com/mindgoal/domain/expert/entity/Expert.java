@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +22,9 @@ public class Expert extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
+
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;
 
     @Column(name = "CAREER_YEARS")
     private int careerYears;
@@ -43,8 +47,8 @@ public class Expert extends BaseEntity {
     @Column(name = "RATING")
     private double rating;
 
-    @Column(name = "IS_ACTIVE")
-    private Boolean isActive;
+    @Column(name = "IS_ACTIVE", nullable = false)
+    private boolean isActive = false;
 
     @Column(name = "CATEGORY")
     private String category;
@@ -61,43 +65,89 @@ public class Expert extends BaseEntity {
     @Column(name = "POSITION")
     private String position;
 
+    @Column(name = "REGION", nullable = false)
+    private String region;
+
     @Column(name = "SPECIALITY")
     private String speciality;
 
-    @Column(name = "TEACHING_POSITION")
-    private String teachingPosition;
+    @Column(name = "TEACHING_METHOD")
+    private String teachingMethod;
 
     @Column(name = "YOUTUBE_URL")
     private String youtubeUrl;
 
-    public Expert(Long id, int careerYears, int matchCount, int physicalScore, int pricePerHour, int techScore,
-                  int mentalScore, double rating, Boolean isActive, String category, String careerHistory,
-                  String description, String instagramUrl, String position, String speciality, String teachingPosition,
-                  String youtubeUrl) {
+    @Builder
+    public Expert(Long id, Long userId, String category, String speciality, String position,
+                  String region, int careerYears, String description, String careerHistory,
+                  String teachingMethod, int pricePerHour, String youtubeUrl,
+                  String instagramUrl, Boolean isActive, double rating, int matchCount,
+                  int physicalScore, int techScore, int mentalScore) {
         this.id = id;
+        this.userId = userId;
+        this.category = category;
+        this.speciality = speciality;
+        this.position = position;
+        this.region = region;
         this.careerYears = careerYears;
+        this.description = description;
+        this.careerHistory = careerHistory;
+        this.teachingMethod = teachingMethod;
+        this.pricePerHour = pricePerHour;
+        this.youtubeUrl = youtubeUrl;
+        this.instagramUrl = instagramUrl;
+        this.isActive = (isActive != null) ? isActive : false;
+        this.rating = rating;
         this.matchCount = matchCount;
         this.physicalScore = physicalScore;
-        this.pricePerHour = pricePerHour;
         this.techScore = techScore;
         this.mentalScore = mentalScore;
-        this.rating = rating;
-        this.isActive = isActive;
-        this.category = category;
-        this.careerHistory = careerHistory;
-        this.description = description;
-        this.instagramUrl = instagramUrl;
-        this.position = position;
-        this.speciality = speciality;
-        this.teachingPosition = teachingPosition;
-        this.youtubeUrl = youtubeUrl;
     }
 
-    public Expert(int careerYears, int matchCount, int physicalScore, int pricePerHour, int techScore, int mentalScore,
-                  double rating, Boolean isActive, String category, String careerHistory, String description,
-                  String instagramUrl, String position, String speciality, String teachingPosition, String youtubeUrl) {
-        this(null, careerYears, matchCount, physicalScore, pricePerHour, techScore, mentalScore, rating, isActive,
-                category, careerHistory, description, instagramUrl, position, speciality, teachingPosition, youtubeUrl);
+    public void update(
+            String specialty,
+            String position,
+            String description,
+            String careerHistory,
+            String teachingMethod,
+            Integer pricePerHour,
+            String youtubeUrl,
+            String instagramUrl
+    ) {
+        if (specialty != null) {
+            this.speciality = specialty;
+        }
+        if (position != null) {
+            this.position = position;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        if (careerHistory != null) {
+            this.careerHistory = careerHistory;
+        }
+        if (teachingMethod != null) {
+            this.teachingMethod = teachingMethod;
+        }
+        if (pricePerHour != null) {
+            this.pricePerHour = pricePerHour;
+        }
+        if (youtubeUrl != null) {
+            this.youtubeUrl = youtubeUrl;
+        }
+        if (instagramUrl != null) {
+            this.instagramUrl = instagramUrl;
+        }
+    }
+
+    public Expert(Long userId, String category, String speciality, String position,
+                  String region, int careerYears, String description, String careerHistory,
+                  String teachingMethod, int pricePerHour, String youtubeUrl,
+                  String instagramUrl, Boolean isActive, double rating, int matchCount,
+                  int physicalScore, int techScore, int mentalScore) {
+        this(null, userId, category, speciality, position, region, careerYears, description, careerHistory,
+                teachingMethod, pricePerHour, youtubeUrl, instagramUrl, isActive, rating, matchCount, physicalScore,
+                techScore, mentalScore);
     }
 
     @Override
