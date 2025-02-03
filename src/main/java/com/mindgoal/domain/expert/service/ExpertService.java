@@ -1,10 +1,7 @@
 package com.mindgoal.domain.expert.service;
 
 import com.mindgoal.common.BaseResponseStatus;
-import com.mindgoal.domain.expert.dto.ExpertCreateRequest;
-import com.mindgoal.domain.expert.dto.ExpertListResponse;
-import com.mindgoal.domain.expert.dto.ExpertResponse;
-import com.mindgoal.domain.expert.dto.ExpertSearchCondition;
+import com.mindgoal.domain.expert.dto.*;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
 import com.mindgoal.domain.user.entity.User;
@@ -62,6 +59,39 @@ public class ExpertService {
                     .mental(expert.getMentalScore())
                     .build();
         });
+    }
+
+    @Transactional(readOnly = true)
+    public ExpertDetailResponse getExpertDetail(Long expertId) {
+        Expert expert = expertRepository.findById(expertId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+
+        User user = userService.getUser(expert.getUserId());
+        return ExpertDetailResponse.from(expert, user.getName());
+    }
+
+    @Transactional
+    public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request) {
+        Expert expert = getExpert(expertId);
+        User currentUser = userService.getCurrentUser();
+
+        // Verify if the current user owns this expert profile
+        if (!expert.getUserId().equals(currentUser.getId())) {
+            throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
+        }
+
+        expert.update(
+                request.getSpecialty(),
+                request.getPosition(),
+                request.getDescription(),
+                request.getCareerHistory(),
+                request.getTeachingMethod(),
+                request.getPricePerHour(),
+                request.getYoutubeUrl(),
+                request.getInstagramUrl()
+        );
+
+        return ExpertUpdateResponse.from(expert);
     }
 
     private Expert createExpertEntity(User user, ExpertCreateRequest request) {
