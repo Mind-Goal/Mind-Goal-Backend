@@ -7,4 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExpertRepository extends JpaRepository<Expert, Long>, ExpertRepositoryCustom {
     boolean existsByUserId(Long userId);
+
+    default Expert findExpertByUserId(Long userId) {
+        return findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 전문가입니다."));
+    }
 }
