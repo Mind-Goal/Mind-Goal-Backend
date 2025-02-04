@@ -43,4 +43,15 @@ public class ChatServiceTest {
         assertThatThrownBy(() -> chatService.saveChatRoom(chatRoomRequest, user.getId())).isExactlyInstanceOf(
                 IllegalArgumentException.class);
     }
+
+    @Test
+    void 채팅방_조회() {
+        User user = UserFixture.오션();
+        ChatRoom chatRoom1 = ChatRoomFixture.오션_심리_채팅방();
+        ChatRoom chatRoom2 = ChatRoomFixture.오션_심리_채팅방();
+        chatRoomRepository.save(chatRoom1);
+        chatRoomRepository.save(chatRoom2);
+
+        assertThat(chatService.getMyChatRooms(user.getId()).size()).isEqualTo(chatRoomRepository.count());
+    }
 }

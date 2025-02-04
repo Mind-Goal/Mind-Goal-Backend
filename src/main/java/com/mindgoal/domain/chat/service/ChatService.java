@@ -6,9 +6,8 @@ import com.mindgoal.domain.chat.entity.ChatRoom;
 import com.mindgoal.domain.chat.entity.ChatRoomStatus;
 import com.mindgoal.domain.chat.repository.ChatMessageRepository;
 import com.mindgoal.domain.chat.repository.ChatRoomRepository;
-import com.mindgoal.domain.user.entity.User;
-import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
-import java.time.LocalDate;
+import com.mindgoal.domain.expert.repository.ExpertRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ExpertRepository expertRepository;
 
     @Transactional
     public ChatRoomResponse saveChatRoom(final ChatRoomRequest chatRoomRequest,
@@ -34,7 +34,23 @@ public class ChatService {
 
     private ChatRoom createChatRoom(final ChatRoomRequest chatRoomRequest, final Long userId) {
         validateExisted(chatRoomRequest.getExpertId(), userId);
-        final ChatRoomStatus chatRoomStatus = new ChatRoomStatus(0L, LocalDate.now(), true);
+        final ChatRoomStatus chatRoomStatus = ChatRoomStatus.createDefaultStatus();
         return new ChatRoom(chatRoomRequest.getExpertId(), userId, chatRoomStatus);
+    }
+
+    public List<ChatRoomResponse> getMyChatRooms(final Long userId) {
+        if(isExpert(userId)){
+            final Long expertId = expertRepository.findExpertByUserId(userId).getId();
+            return chatRoomRepository.findAllByExpertId(expertId).stream()
+                    .map(ChatRoomResponse::from)
+                    .toList();
+        }
+        return chatRoomRepository.findAllByUserId(userId).stream()
+                .map(ChatRoomResponse::from)
+                .toList();
+    }
+
+    private boolean isExpert(final Long userId) {
+        return expertRepository.existsByUserId(userId);
     }
 }

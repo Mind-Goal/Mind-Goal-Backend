@@ -7,7 +7,7 @@ public class UserFixture {
         return new User(1L,"email@gmail.com", "password", "오션", "010-0000-1111", "https://images", false);
     }
 
-    public static User 동의한_유저() {
+    public static User 스텝() {
         return new User(2L,"email@naver.com", "password22", "ocean", "010-0000-2222", "https://images", true);
     }
 
