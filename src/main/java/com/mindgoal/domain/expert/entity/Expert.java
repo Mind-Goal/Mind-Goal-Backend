@@ -78,11 +78,12 @@ public class Expert extends BaseEntity {
     private String youtubeUrl;
 
     @Builder
-    public Expert(Long userId, String category, String speciality, String position,
+    public Expert(Long id, Long userId, String category, String speciality, String position,
                   String region, int careerYears, String description, String careerHistory,
                   String teachingMethod, int pricePerHour, String youtubeUrl,
                   String instagramUrl, Boolean isActive, double rating, int matchCount,
                   int physicalScore, int techScore, int mentalScore) {
+        this.id = id;
         this.userId = userId;
         this.category = category;
         this.speciality = speciality;
@@ -113,14 +114,40 @@ public class Expert extends BaseEntity {
             String youtubeUrl,
             String instagramUrl
     ) {
-        if (specialty != null) this.speciality = specialty;
-        if (position != null) this.position = position;
-        if (description != null) this.description = description;
-        if (careerHistory != null) this.careerHistory = careerHistory;
-        if (teachingMethod != null) this.teachingMethod = teachingMethod;
-        if (pricePerHour != null) this.pricePerHour = pricePerHour;
-        if (youtubeUrl != null) this.youtubeUrl = youtubeUrl;
-        if (instagramUrl != null) this.instagramUrl = instagramUrl;
+        if (specialty != null) {
+            this.speciality = specialty;
+        }
+        if (position != null) {
+            this.position = position;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        if (careerHistory != null) {
+            this.careerHistory = careerHistory;
+        }
+        if (teachingMethod != null) {
+            this.teachingMethod = teachingMethod;
+        }
+        if (pricePerHour != null) {
+            this.pricePerHour = pricePerHour;
+        }
+        if (youtubeUrl != null) {
+            this.youtubeUrl = youtubeUrl;
+        }
+        if (instagramUrl != null) {
+            this.instagramUrl = instagramUrl;
+        }
+    }
+
+    public Expert(Long userId, String category, String speciality, String position,
+                  String region, int careerYears, String description, String careerHistory,
+                  String teachingMethod, int pricePerHour, String youtubeUrl,
+                  String instagramUrl, Boolean isActive, double rating, int matchCount,
+                  int physicalScore, int techScore, int mentalScore) {
+        this(null, userId, category, speciality, position, region, careerYears, description, careerHistory,
+                teachingMethod, pricePerHour, youtubeUrl, instagramUrl, isActive, rating, matchCount, physicalScore,
+                techScore, mentalScore);
     }
 
     @Override

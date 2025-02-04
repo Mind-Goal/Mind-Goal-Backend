@@ -44,8 +44,9 @@ public class User extends BaseEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public User(String email, String password, String name, String phoneNumber,
+    public User(Long id, String email, String password, String name, String phoneNumber,
                 String profileImage, Boolean isAgreePolicy) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -53,6 +54,11 @@ public class User extends BaseEntity {
         this.profileImage = profileImage;
         this.isAgreePolicy = isAgreePolicy;
         this.isDeleted = false;
+    }
+
+    public User(String email, String password, String name, String phoneNumber,
+                String profileImage, Boolean isAgreePolicy){
+        this(null, email, password, name, phoneNumber, profileImage, isAgreePolicy);
     }
 
     @Override
