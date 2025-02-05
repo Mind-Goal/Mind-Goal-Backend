@@ -43,7 +43,7 @@ public class ExpertDetailResponse {
         private String instagram;
     }
 
-    public static ExpertDetailResponse from(Expert expert, String userName) {
+    public static ExpertDetailResponse of(Expert expert, String userName) {
         return ExpertDetailResponse.builder()
                 .id(expert.getId())
                 .userId(expert.getUserId())
