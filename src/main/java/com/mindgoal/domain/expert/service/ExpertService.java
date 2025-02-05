@@ -34,8 +34,7 @@ public class ExpertService {
 
     @Transactional(readOnly = true)
     public Expert getExpert(Long id) {
-        return expertRepository.findById(id)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+        return expertRepository.findExpertByIdOrThrow(id);
     }
 
     @Transactional(readOnly = true)
@@ -63,19 +62,16 @@ public class ExpertService {
 
     @Transactional(readOnly = true)
     public ExpertDetailResponse getExpertDetail(Long expertId) {
-        Expert expert = expertRepository.findById(expertId)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
-
+        Expert expert = expertRepository.findExpertByIdOrThrow(expertId);
         User user = userService.getUser(expert.getUserId());
-        return ExpertDetailResponse.from(expert, user.getName());
+        return ExpertDetailResponse.of(expert, user.getName());
     }
 
     @Transactional
     public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request) {
-        Expert expert = getExpert(expertId);
+        Expert expert = expertRepository.findExpertByIdOrThrow(expertId);
         User currentUser = userService.getCurrentUser();
 
-        // Verify if the current user owns this expert profile
         if (!expert.getUserId().equals(currentUser.getId())) {
             throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
         }
