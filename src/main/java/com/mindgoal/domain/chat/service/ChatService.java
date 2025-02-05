@@ -39,7 +39,7 @@ public class ChatService {
     }
 
     public List<ChatRoomResponse> getMyChatRooms(final Long userId) {
-        if(isExpert(userId)){
+        if (isExpert(userId)) {
             final Long expertId = expertRepository.findExpertByUserId(userId).getId();
             return chatRoomRepository.findAllByExpertId(expertId).stream()
                     .map(ChatRoomResponse::from)
