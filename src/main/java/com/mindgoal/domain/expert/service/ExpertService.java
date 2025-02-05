@@ -34,7 +34,7 @@ public class ExpertService {
 
     @Transactional(readOnly = true)
     public Expert getExpert(Long id) {
-        return expertRepository.findExpertByIdOrThrow(id);
+        return expertRepository.findExpertById(id);
     }
 
     @Transactional(readOnly = true)
@@ -62,14 +62,14 @@ public class ExpertService {
 
     @Transactional(readOnly = true)
     public ExpertDetailResponse getExpertDetail(Long expertId) {
-        Expert expert = expertRepository.findExpertByIdOrThrow(expertId);
+        Expert expert = expertRepository.findExpertById(expertId);
         User user = userService.getUser(expert.getUserId());
         return ExpertDetailResponse.of(expert, user.getName());
     }
 
     @Transactional
     public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request) {
-        Expert expert = expertRepository.findExpertByIdOrThrow(expertId);
+        Expert expert = expertRepository.findExpertById(expertId);
         User currentUser = userService.getCurrentUser();
 
         if (!expert.getUserId().equals(currentUser.getId())) {
