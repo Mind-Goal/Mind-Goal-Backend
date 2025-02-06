@@ -56,7 +56,7 @@ public class ExpertController {
         return ResponseEntity.ok(BaseResponse.success(response, "전문가 목록 조회 성공"));
     }
 
-    @GetMapping("/{Id}")
+    @GetMapping("/{expertId}")
     public ResponseEntity<BaseResponse<ExpertDetailResponse>> getExpertDetail(
             @PathVariable Long expertId) {
         ExpertDetailResponse response = expertService.getExpertDetail(expertId);
