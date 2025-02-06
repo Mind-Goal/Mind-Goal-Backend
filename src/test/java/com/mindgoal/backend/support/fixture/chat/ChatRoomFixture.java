@@ -8,4 +8,12 @@ public class ChatRoomFixture {
     public static ChatRoom 오션_심리_채팅방() {
         return new ChatRoom(1L, 1L, new ChatRoomStatus(0L, LocalDate.now(), true));
     }
+
+    public static ChatRoom 오션_진로_채팅방() {
+        return new ChatRoom(2L, 1L, new ChatRoomStatus(0L, LocalDate.now(), true));
+    }
+
+    public static ChatRoom 스텝_진로_채팅방() {
+        return new ChatRoom(2L, 2L, new ChatRoomStatus(0L, LocalDate.now(), true));
+    }
 }

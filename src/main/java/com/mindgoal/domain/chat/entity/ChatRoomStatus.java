@@ -29,4 +29,8 @@ public class ChatRoomStatus {
         this.lastMessageAt = lastMessageAt;
         this.isActive = isActive;
     }
+
+    public static ChatRoomStatus createDefaultStatus() {
+        return new ChatRoomStatus(0L, null, true);
+    }
 }

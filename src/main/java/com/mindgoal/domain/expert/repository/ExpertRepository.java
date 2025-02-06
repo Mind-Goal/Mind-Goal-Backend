@@ -15,3 +15,4 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, ExpertRep
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
     }
 }
+
