@@ -14,5 +14,10 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, ExpertRep
         return findById(id)
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
     }
+
+    default Expert findExpertByUserId(Long userId) {
+        return findById(userId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+    }
 }
 
