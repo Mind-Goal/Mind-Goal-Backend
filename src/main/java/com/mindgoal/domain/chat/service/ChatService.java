@@ -1,7 +1,10 @@
 package com.mindgoal.domain.chat.service;
 
+import com.mindgoal.domain.chat.dto.ChatMessageRequest;
+import com.mindgoal.domain.chat.dto.ChatMessageResponse;
 import com.mindgoal.domain.chat.dto.ChatRoomRequest;
 import com.mindgoal.domain.chat.dto.ChatRoomResponse;
+import com.mindgoal.domain.chat.entity.ChatMessage;
 import com.mindgoal.domain.chat.entity.ChatRoom;
 import com.mindgoal.domain.chat.entity.ChatRoomStatus;
 import com.mindgoal.domain.chat.repository.ChatMessageRepository;
@@ -20,22 +23,20 @@ public class ChatService {
     private final ExpertRepository expertRepository;
 
     @Transactional
-    public ChatRoomResponse saveChatRoom(final ChatRoomRequest chatRoomRequest,
-                                         final Long userId) {
-        final ChatRoom chatRoom = createChatRoom(chatRoomRequest, userId);
-        return ChatRoomResponse.from(chatRoom);
+    public ChatMessageResponse sendMessage(final Long userId, final ChatMessageRequest chatMessageRequest) {
+        ChatRoom chatRoom = chatRoomRepository.findByExpertIdAndUserId(chatMessageRequest.expertId(), userId)
+                .orElseGet(() -> {
+                    ChatRoom newChatRoom = createChatRoom(chatMessageRequest, userId);
+                    return chatRoomRepository.save(newChatRoom);
+                });
+
+        ChatMessage chatMessage = new ChatMessage(chatRoom.getId(), userId, chatMessageRequest.content());
+        return ChatMessageResponse.from(chatMessageRepository.save(chatMessage));
     }
 
-    private void validateExisted(final Long expertId, final Long userId) {
-        if (chatRoomRepository.existsByExpertIdAndUserId(expertId, userId)) {
-            throw new IllegalArgumentException("already exist");
-        }
-    }
-
-    private ChatRoom createChatRoom(final ChatRoomRequest chatRoomRequest, final Long userId) {
-        validateExisted(chatRoomRequest.getExpertId(), userId);
+    private ChatRoom createChatRoom(final ChatMessageRequest chatMessageRequest, final Long userId) {
         final ChatRoomStatus chatRoomStatus = ChatRoomStatus.createDefaultStatus();
-        return new ChatRoom(chatRoomRequest.getExpertId(), userId, chatRoomStatus);
+        return new ChatRoom(chatMessageRequest.expertId(), userId, chatRoomStatus);
     }
 
     public List<ChatRoomResponse> getMyChatRooms(final Long userId) {

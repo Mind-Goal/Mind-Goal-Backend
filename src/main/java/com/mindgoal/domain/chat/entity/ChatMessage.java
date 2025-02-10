@@ -17,13 +17,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 public class ChatMessage extends BaseEntity {
+    private final int DEFAULT_READ_COUNT = 2; // 추후 단체 컨설팅 기능이 생긴다면 수정해야하는 로직
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
     @Column
-    private Long senderId;
+    private Long userId;
 
     @Column
     private Long chatRoomId;
@@ -32,7 +34,14 @@ public class ChatMessage extends BaseEntity {
     private String content;
 
     @Column(name = "READ_COUNT")
-    private boolean readYN;
+    private int readCount;
+
+    public ChatMessage(Long userId, Long chatRoomId, String content) {
+        this.userId = userId;
+        this.chatRoomId = chatRoomId;
+        this.content = content;
+        this.readCount = DEFAULT_READ_COUNT;
+    }
 
     @Override
     public boolean equals(Object object) {
