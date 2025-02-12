@@ -104,7 +104,6 @@ public class UserService {
                 .orElseGet(() -> {
                     return userRepository.save(User.builder()
                             .email(email)
-                            .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                             .name(userInfo.getProperties().getNickname())
                             .profileImage(userInfo.getProperties().getProfile_image())
                             .isAgreePolicy(true)
