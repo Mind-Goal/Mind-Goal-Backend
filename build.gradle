@@ -68,6 +68,9 @@ dependencies {
 
 	// Lombok for Tests
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// open feign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
 }
 
 tasks.named('test') {
