@@ -1,13 +1,14 @@
 package com.mindgoal.config.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
+import static com.mindgoal.common.BaseResponseStatus.TOKEN_NOT_FOUND;
+
+import com.mindgoal.exception.CustomException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,59 +16,48 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-@Component
 @RequiredArgsConstructor
+@Slf4j
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String PREFIX_TOKEN = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String jwtToken = parseJwt(request);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-            if (jwtToken != null) {
-                if (jwtTokenProvider.validateToken(jwtToken)) {
-                    processValidToken(jwtToken);
-                } else {
-                    processExpiredToken(jwtToken, response);
-                }
+        String requestUri = request.getRequestURI();
+        if (requestUri.matches("^\\/login(?:\\/.*)?$") || requestUri.matches("^\\/oauth2(?:\\/.*)?$")
+                || requestUri.matches("^\\/favicon.ico(?:\\/.*)?$")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = resolveToken(request);
+
+        if (token != null) {
+            if (!jwtTokenProvider.isValidToken(token)) {
+                throw new CustomException(TOKEN_NOT_FOUND);
             }
-        } catch (ExpiredJwtException e) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "토큰이 만료되었습니다.");
-        } catch (JwtException e) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "유효한 토큰이 아닙니다.");
-        } catch (Exception e) {
-            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생했습니다.");
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 여기서 인증 객체를 출력해 확인
+            log.info("Authentication Object: {}", authentication);
+            log.info("Principal Details: {}", authentication.getPrincipal());
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(BEARER_PREFIX)) {
-            return headerAuth.substring(BEARER_PREFIX.length());
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HEADER_AUTHORIZATION);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(PREFIX_TOKEN)) {
+            return bearerToken.substring(PREFIX_TOKEN.length());
         }
         return null;
-    }
-
-    // 토큰 처리 로직 분리
-    private void processValidToken(String token) {
-        Authentication auth = jwtTokenProvider.getAuthentication(token);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    // 만료 토큰 검증후 재발급
-    private void processExpiredToken(String oldToken, HttpServletResponse response) {
-        String username = jwtTokenProvider.getUserName(oldToken);
-        JwTokenDto newToken = jwtTokenProvider.generateToken(username);
-        response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + newToken.getAccessToken());
-
-        Authentication auth = jwtTokenProvider.getAuthentication(newToken.getAccessToken());
-        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

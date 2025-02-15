@@ -19,11 +19,8 @@ public class User extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "EMAIL", nullable = false)
+    @Column(name = "EMAIL")
     private String email;
-
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
 
     @Column(name = "NAME")
     private String name;
@@ -44,11 +41,10 @@ public class User extends BaseEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public User(Long id, String email, String password, String name, String phoneNumber,
+    public User(Long id, String email, String name, String phoneNumber,
                 String profileImage, Boolean isAgreePolicy) {
         this.id = id;
         this.email = email;
-        this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.profileImage = profileImage;
@@ -56,9 +52,9 @@ public class User extends BaseEntity {
         this.isDeleted = false;
     }
 
-    public User(String email, String password, String name, String phoneNumber,
-                String profileImage, Boolean isAgreePolicy){
-        this(null, email, password, name, phoneNumber, profileImage, isAgreePolicy);
+    public User(String email, String name, String phoneNumber,
+                String profileImage, Boolean isAgreePolicy) {
+        this(null, email, name, phoneNumber, profileImage, isAgreePolicy);
     }
 
     @Override

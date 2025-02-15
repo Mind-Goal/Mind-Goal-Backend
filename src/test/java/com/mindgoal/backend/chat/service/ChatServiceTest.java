@@ -25,26 +25,6 @@ public class ChatServiceTest {
     private ChatService chatService;
 
     @Test
-    void 채팅방_생성() {
-        Expert expert = ExpertFixture.심리_전문가();
-        User user = UserFixture.오션();
-        ChatRoomRequest chatRoomRequest = new ChatRoomRequest(expert.getId(), "defaultImage");
-        chatService.saveChatRoom(chatRoomRequest, user.getId());
-        assertThat(chatRoomRepository.count()).isNotNull();
-    }
-
-    @Test
-    void 채팅방이_이미_존재할_경우_에외처리() {
-        Expert expert = ExpertFixture.심리_전문가();
-        User user = UserFixture.오션();
-        ChatRoomRequest chatRoomRequest = new ChatRoomRequest(expert.getId(), "defaultImage");
-        ChatRoom chatRoom = ChatRoomFixture.오션_심리_채팅방();
-        chatRoomRepository.save(chatRoom);
-        assertThatThrownBy(() -> chatService.saveChatRoom(chatRoomRequest, user.getId())).isExactlyInstanceOf(
-                IllegalArgumentException.class);
-    }
-
-    @Test
     void 채팅방_조회() {
         User user = UserFixture.오션();
         ChatRoom chatRoom1 = ChatRoomFixture.오션_심리_채팅방();

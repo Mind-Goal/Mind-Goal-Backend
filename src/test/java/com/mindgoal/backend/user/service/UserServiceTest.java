@@ -113,7 +113,6 @@ class UserServiceTest {
     private User createUser(String email, String name, String profileImage) {
         User user = User.builder()
                 .email(email)
-                .password("password1234")
                 .name(name)
                 .profileImage(profileImage)
                 .build();
