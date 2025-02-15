@@ -6,20 +6,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class KakaoUserInfo {
-    private Long id;
-    private Properties properties;
-    private KakaoAccount kakao_account;
 
-    @Getter
-    @NoArgsConstructor
-    public static class Properties {
-        private String nickname;
-        private String profile_image;
+    private Long id;
+    private KakaoAccount kakaoAccount;
+
+    public String getEmail() {
+        return kakaoAccount != null ? kakaoAccount.getEmail() : null;
+    }
+
+    public String getName() {
+        return kakaoAccount != null ? kakaoAccount.getProfile().getNickname() : null;
     }
 
     @Getter
-    @NoArgsConstructor
-    public static class KakaoAccount {
+    private static class KakaoAccount {
         private String email;
+        private Profile profile;
+
+        @Getter
+        private static class Profile {
+            private String nickname;
+            private String profileImageUrl;
+        }
     }
 }
