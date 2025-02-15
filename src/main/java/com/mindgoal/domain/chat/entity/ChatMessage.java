@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 public class ChatMessage extends BaseEntity {
-    private final int DEFAULT_READ_COUNT = 2; // 추후 단체 컨설팅 기능이 생긴다면 수정해야하는 로직
+    private final int DEFAULT_READ_COUNT = 1; // 추후 단체 컨설팅 기능이 생긴다면 수정해야하는 로직
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
