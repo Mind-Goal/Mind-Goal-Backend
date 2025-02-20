@@ -4,6 +4,7 @@ import com.mindgoal.common.BaseResponse;
 import com.mindgoal.common.BaseResponseStatus;
 import com.mindgoal.domain.expert.dto.*;
 import com.mindgoal.domain.expert.service.ExpertService;
+import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +24,9 @@ public class ExpertController {
 
     @PostMapping
     public ResponseEntity<BaseResponse<ExpertResponse>> register(
-            @RequestBody @Valid ExpertCreateRequest request) {
-        ExpertResponse response = expertService.register(request);
+            @RequestBody @Valid ExpertCreateRequest request,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        ExpertResponse response = expertService.register(request, principalDetails.getId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(BaseResponse.success(response, BaseResponseStatus.EXPERT_REGISTER_SUCCESS.getMessage()));
@@ -65,11 +68,12 @@ public class ExpertController {
         );
     }
 
-    @PutMapping("/{Id}")
+    @PutMapping("/{expertId}")
     public ResponseEntity<BaseResponse<ExpertUpdateResponse>> updateExpert(
             @PathVariable Long expertId,
-            @RequestBody @Valid ExpertUpdateRequest request) {
-        ExpertUpdateResponse response = expertService.updateExpert(expertId, request);
+            @RequestBody @Valid ExpertUpdateRequest request,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        ExpertUpdateResponse response = expertService.updateExpert(expertId, request, principalDetails.getId());
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.EXPERT_UPDATE_SUCCESS.getMessage())
         );
