@@ -20,14 +20,13 @@ public class ExpertService {
     private final UserService userService;
 
     @Transactional
-    public ExpertResponse register(ExpertCreateRequest request) {
-        User currentUser = userService.getCurrentUser();
-
-        if (expertRepository.existsByUserId(currentUser.getId())) {
+    public ExpertResponse register(ExpertCreateRequest request, Long userId) {
+        if (expertRepository.existsByUserId(userId)) {
             throw new CustomException(BaseResponseStatus.EXPERT_ALREADY_EXISTS);
         }
 
-        Expert expert = createExpertEntity(currentUser, request);
+        User user = userService.getUser(userId);
+        Expert expert = createExpertEntity(user, request);
         Expert savedExpert = expertRepository.save(expert);
         return ExpertResponse.from(savedExpert);
     }
@@ -68,11 +67,10 @@ public class ExpertService {
     }
 
     @Transactional
-    public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request) {
+    public ExpertUpdateResponse updateExpert(Long expertId, ExpertUpdateRequest request, Long currentUserId) {
         Expert expert = expertRepository.findExpertById(expertId);
-        User currentUser = userService.getCurrentUser();
 
-        if (!expert.getUserId().equals(currentUser.getId())) {
+        if (!expert.getUserId().equals(currentUserId)) {
             throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
         }
 
@@ -112,6 +110,4 @@ public class ExpertService {
                 .mentalScore(0)
                 .build();
     }
-
-
 }

@@ -28,15 +28,9 @@ class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
-    private SecurityContext securityContext;
-
-    @MockBean
-    private Authentication authentication;
-
     @BeforeEach
     void setUp() {
-        SecurityContextHolder.clearContext();
+        userRepository.deleteAll();
     }
 
     @DisplayName("사용자 정보 업데이트 성공")
@@ -44,7 +38,6 @@ class UserServiceTest {
     void updateUser_Success() {
         // given
         User savedUser = createUser("test@example.com", "oldName", "old.jpg");
-        setSecurityContext(savedUser.getEmail());
 
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .name("newName")
@@ -52,7 +45,7 @@ class UserServiceTest {
                 .build();
 
         // when
-        User updatedUser = userService.updateUser(request);
+        User updatedUser = userService.updateUser(request, savedUser.getId());
 
         // then
         assertThat(updatedUser)
@@ -60,7 +53,7 @@ class UserServiceTest {
                 .containsExactly("newName", "newImage.jpg");
 
         // DB 검증
-        User foundUser = userRepository.findByEmailAndIsDeletedFalse(savedUser.getEmail())
+        User foundUser = userRepository.findById(savedUser.getId())
                 .orElseThrow(() -> new AssertionError("User should exist"));
         assertThat(foundUser)
                 .extracting("name", "profileImage")
@@ -71,17 +64,15 @@ class UserServiceTest {
     @Test
     void updateUser_UserNotFound_ThrowsException() {
         // given
-        String nonExistentEmail = "nonexistent@example.com";
-        setSecurityContext(nonExistentEmail);
-
+        Long nonExistentUserId = 999L;
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .name("newName")
                 .profileImage("newImage.jpg")
                 .build();
 
         // when & then
-        assertThrows(UsernameNotFoundException.class,
-                () -> userService.updateUser(request));
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.updateUser(request, nonExistentUserId));
     }
 
     @DisplayName("사용자 정보 부분 업데이트 - 이름만 변경")
@@ -89,25 +80,18 @@ class UserServiceTest {
     void updateUser_NameOnly() {
         // given
         User savedUser = createUser("test@example.com", "oldName", "old.jpg");
-        setSecurityContext(savedUser.getEmail());
 
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .name("newName")
                 .build();
 
         // when
-        User updatedUser = userService.updateUser(request);
+        User updatedUser = userService.updateUser(request, savedUser.getId());
 
         // then
         assertThat(updatedUser)
                 .extracting("name", "profileImage")
                 .containsExactly("newName", "old.jpg");
-    }
-
-    private void setSecurityContext(String email) {
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn(email);
-        SecurityContextHolder.setContext(securityContext);
     }
 
     private User createUser(String email, String name, String profileImage) {
