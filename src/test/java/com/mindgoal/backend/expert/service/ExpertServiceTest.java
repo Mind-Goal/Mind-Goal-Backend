@@ -204,7 +204,6 @@ class ExpertServiceTest {
     private User createUser(String email, String name) {
         User user = User.builder()
                 .email(email)
-                .password("password1234")
                 .name(name)
                 .isAgreePolicy(true)
                 .build();
