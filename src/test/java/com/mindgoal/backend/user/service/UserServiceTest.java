@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -27,11 +28,6 @@ class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-    }
 
     @DisplayName("사용자 정보 업데이트 성공")
     @Test
@@ -71,8 +67,8 @@ class UserServiceTest {
                 .build();
 
         // when & then
-        assertThrows(IllegalArgumentException.class,
-                () -> userService.updateUser(request, nonExistentUserId));
+        assertThatThrownBy(() -> userService.updateUser(request, nonExistentUserId))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("사용자 정보 부분 업데이트 - 이름만 변경")
