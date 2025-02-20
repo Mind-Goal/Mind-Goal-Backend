@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,11 +30,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Profile("!test")
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -41,7 +39,7 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private final String[] COMMON_WHITE_LIST = new String[]{"/favicon.ico/**", "/login/**", "/error/**",
-            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html"};
+            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/ws-stomp"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
