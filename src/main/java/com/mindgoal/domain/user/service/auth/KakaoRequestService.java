@@ -47,7 +47,6 @@ public class KakaoRequestService implements RequestService {
     public JwtResponse redirect(final String provider, final String code, final String state) {
         // 카카오에서 넘겨준 엑세스 토큰
         TokenResponse tokenResponse = getToken(code);
-        System.out.println(tokenResponse);
         // 카카오에서 넘겨준 유저 정보
         KakaoUserInfo kakaoUserInfo = getUserInfo(tokenResponse.getAccessToken());
 
@@ -73,7 +72,6 @@ public class KakaoRequestService implements RequestService {
         RefreshToken refreshToken = refreshTokenRepository.findByKeyEmail(user.getEmail())
                 .orElseThrow(IllegalArgumentException::new);
 
-        System.out.println(refreshToken);
         return getBuild(newToken_AccessToken.getAccessToken(), refreshToken.getRefreshToken(), user,
                 tokenResponse.getRefreshToken());
     }
@@ -106,5 +104,4 @@ public class KakaoRequestService implements RequestService {
     public OauthRefresh refresh(final String refreshToken) {
         return kakaoAuthClient.refresh("refresh_token", CLIENT_ID, refreshToken);
     }
-
 }
