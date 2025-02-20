@@ -23,7 +23,6 @@ public class UserService {
 
     @Transactional
     public UserResponse signUp(final String email, final String name) {
-
         User user = User.builder()
                 .email(email)
                 .name(name)
@@ -42,37 +41,28 @@ public class UserService {
         if (session != null) {
             session.invalidate();
         }
-
-        // 현재 스레드의 로컬 컨텍스트 정리
-        SecurityContextHolder.getContext().setAuthentication(null);
-    }
-
-    public User getCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
     @Transactional
-    public User updateUser(UpdateUserRequest request) {
-        User user = getCurrentUser();
+    public User updateUser(UpdateUserRequest request, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         user.updateProfile(request.getName(), request.getProfileImage());
         return userRepository.save(user);
     }
 
     @Transactional
-    public void withdrawUser() {
-        User user = getCurrentUser();
-        user.withdraw(); // 실제 삭제 대신 상태만 변경
-        userRepository.save(user); // 변경된 상태를 저장
-        SecurityContextHolder.clearContext();
+    public void withdrawUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        user.withdraw();
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
     public User getUser(Long userId) {
         return userRepository.findById(userId)
-                .filter(user -> !user.isDeleted())  // isDeleted가 false인 사용자만 필터링
+                .filter(user -> !user.isDeleted())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
-
 }

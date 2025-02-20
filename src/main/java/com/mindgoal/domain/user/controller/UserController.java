@@ -6,6 +6,7 @@ import com.mindgoal.domain.user.dto.KakaoLoginRequest;
 import com.mindgoal.domain.user.dto.TokenDto;
 import com.mindgoal.domain.user.dto.UpdateUserRequest;
 import com.mindgoal.domain.user.entity.User;
+import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
 import com.mindgoal.domain.user.service.UserService;
 import com.mindgoal.domain.user.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,20 +34,24 @@ public class UserController {
     }
 
     @GetMapping("/user/me")
-    public ResponseEntity<BaseResponse<User>> getCurrentUser() {
-        User user = userService.getCurrentUser();
+    public ResponseEntity<BaseResponse<User>> getCurrentUser(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userService.getUser(principalDetails.getId());
         return ResponseEntity.ok(BaseResponse.success(user, "사용자 정보 조회 성공"));
     }
 
     @PutMapping("/user/me")
-    public ResponseEntity<BaseResponse<User>> updateMyInfo(@RequestBody @Valid UpdateUserRequest request) {
-        User updatedUser = userService.updateUser(request);
+    public ResponseEntity<BaseResponse<User>> updateMyInfo(
+            @RequestBody @Valid UpdateUserRequest request,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User updatedUser = userService.updateUser(request, principalDetails.getId());
         return ResponseEntity.ok(BaseResponse.success(updatedUser, "내 정보 수정 성공"));
     }
 
     @DeleteMapping("/user/me")
-    public ResponseEntity<BaseResponse<Void>> withdrawUser() {
-        userService.withdrawUser();
+    public ResponseEntity<BaseResponse<Void>> withdrawUser(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        userService.withdrawUser(principalDetails.getId());
         return ResponseEntity.ok(BaseResponse.success(null, "회원 탈퇴 성공"));
     }
 }
