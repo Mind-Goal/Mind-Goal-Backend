@@ -1,5 +1,6 @@
 package com.mindgoal.domain.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 public class KakaoUserInfo {
 
     private Long id;
+
+    @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
     public String getEmail() {
@@ -15,18 +18,24 @@ public class KakaoUserInfo {
     }
 
     public String getName() {
-        return kakaoAccount != null ? kakaoAccount.getProfile().getNickname() : null;
+        return kakaoAccount != null && kakaoAccount.getProfile() != null
+                ? kakaoAccount.getProfile().getNickname() : null;
     }
 
     @Getter
-    private static class KakaoAccount {
+    public static class KakaoAccount {
         private String email;
+
+        @JsonProperty("profile")
         private Profile profile;
 
         @Getter
-        private static class Profile {
+        public static class Profile {
+            @JsonProperty("nickname")
             private String nickname;
-            private String profileImageUrl;
+
+            @JsonProperty("profile_image")
+            private String profile_image;
         }
     }
 }
