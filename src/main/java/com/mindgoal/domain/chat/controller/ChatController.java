@@ -17,8 +17,10 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/rooms/{roomId}/message")
-    public void createChatMessage(@DestinationVariable("roomId") final Long roomId, @RequestBody ChatMessageRequest chatMessageRequest) {
-        final ChatMessageResponse chatMessageResponse = chatService.sendMessage(chatMessageRequest.userId(), chatMessageRequest);
+    public void createChatMessage(@DestinationVariable("roomId") final Long roomId,
+                                  @RequestBody ChatMessageRequest chatMessageRequest) {
+        final ChatMessageResponse chatMessageResponse = chatService.sendMessage(chatMessageRequest.userId(),
+                chatMessageRequest);
         messagingTemplate.convertAndSend("/queue/chat/rooms/" + roomId, chatMessageResponse);
     }
 }

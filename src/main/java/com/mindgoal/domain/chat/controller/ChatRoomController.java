@@ -25,7 +25,8 @@ public class ChatRoomController {
                                                        @RequestBody ChatRoomRequest createRoomRequest) {
         return ResponseEntity.ok(chatRoomService.createChatRoom(principalDetails.getId(), createRoomRequest));
     }
-        @GetMapping("/room-list")
+
+    @GetMapping("/room-list")
     public ResponseEntity<List<ChatRoomResponse>> getMyChatRooms(@AuthenticationPrincipal PrincipalDetails user) {
         final List<ChatRoomResponse> chatRoomsResponse = chatRoomService.getMyChatRooms(user.getId());
         return ResponseEntity.ok(chatRoomsResponse);
