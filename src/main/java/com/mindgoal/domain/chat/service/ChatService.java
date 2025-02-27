@@ -24,34 +24,19 @@ public class ChatService {
 
     @Transactional
     public ChatMessageResponse sendMessage(final Long userId, final ChatMessageRequest chatMessageRequest) {
-        ChatRoom chatRoom = chatRoomRepository.findByExpertIdAndUserId(chatMessageRequest.expertId(), userId)
-                .orElseGet(() -> {
-                    ChatRoom newChatRoom = createChatRoom(chatMessageRequest, userId);
-                    return chatRoomRepository.save(newChatRoom);
-                });
+        System.out.println("sendMessage() called");
+        System.out.println("User ID: " + userId);
+        System.out.println("Expert ID: " + chatMessageRequest.expertId());
+        System.out.println("Content: " + chatMessageRequest.content());
+
+        ChatRoom chatRoom = chatRoomRepository.findByExpertIdAndUserId(chatMessageRequest.expertId(), userId);
+        System.out.println("Chat Room ID: " + chatRoom.getId());
 
         ChatMessage chatMessage = new ChatMessage(chatRoom.getId(), userId, chatMessageRequest.content());
-        return ChatMessageResponse.from(chatMessageRepository.save(chatMessage));
-    }
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
-    private ChatRoom createChatRoom(final ChatMessageRequest chatMessageRequest, final Long userId) {
-        final ChatRoomStatus chatRoomStatus = ChatRoomStatus.createDefaultStatus();
-        return new ChatRoom(chatMessageRequest.expertId(), userId, chatRoomStatus);
-    }
+        System.out.println("Message saved with ID: " + savedMessage.getId());
 
-    public List<ChatRoomResponse> getMyChatRooms(final Long userId) {
-        if (isExpert(userId)) {
-            final Long expertId = expertRepository.findExpertByUserId(userId).getId();
-            return chatRoomRepository.findAllByExpertId(expertId).stream()
-                    .map(ChatRoomResponse::from)
-                    .toList();
-        }
-        return chatRoomRepository.findAllByUserId(userId).stream()
-                .map(ChatRoomResponse::from)
-                .toList();
-    }
-
-    private boolean isExpert(final Long userId) {
-        return expertRepository.existsByUserId(userId);
+        return ChatMessageResponse.from(savedMessage);
     }
 }
