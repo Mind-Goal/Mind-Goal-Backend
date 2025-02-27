@@ -24,18 +24,10 @@ public class ChatService {
 
     @Transactional
     public ChatMessageResponse sendMessage(final Long userId, final ChatMessageRequest chatMessageRequest) {
-        System.out.println("sendMessage() called");
-        System.out.println("User ID: " + userId);
-        System.out.println("Expert ID: " + chatMessageRequest.expertId());
-        System.out.println("Content: " + chatMessageRequest.content());
-
         ChatRoom chatRoom = chatRoomRepository.findByExpertIdAndUserId(chatMessageRequest.expertId(), userId);
-        System.out.println("Chat Room ID: " + chatRoom.getId());
 
         ChatMessage chatMessage = new ChatMessage(chatRoom.getId(), userId, chatMessageRequest.content());
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
-
-        System.out.println("Message saved with ID: " + savedMessage.getId());
 
         return ChatMessageResponse.from(savedMessage);
     }
