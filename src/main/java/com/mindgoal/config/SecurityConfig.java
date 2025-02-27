@@ -39,7 +39,7 @@ public class SecurityConfig {
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private final String[] COMMON_WHITE_LIST = new String[]{"/favicon.ico/**", "/login/**", "/error/**",
-            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/ws-stomp"};
+            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/connection/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

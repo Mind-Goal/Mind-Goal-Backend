@@ -1,16 +1,23 @@
 package com.mindgoal.domain.user.entity.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mindgoal.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.Collection;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@RequiredArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class PrincipalDetails implements UserDetails /*, OAuth2User*/ {
-    private final User user;
+    private User user;
+
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return user.getId();

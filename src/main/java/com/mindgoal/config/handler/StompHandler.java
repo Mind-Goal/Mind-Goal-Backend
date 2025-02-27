@@ -28,6 +28,5 @@ public class StompHandler implements ChannelInterceptor {
             case ERROR -> log.info("ERROR: " + sessionId);
             default -> log.info("UNKNOWN: " + sessionId);
         }
-
     }
 }

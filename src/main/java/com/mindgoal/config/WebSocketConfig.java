@@ -12,24 +12,23 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
-public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    final StompHandler stompHandler;
+    private final StompHandler stompHandler;
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // /ws-stomp로 연결하는 엔드포인트를 생성하고, CORS 허용
-        registry
-                .addEndpoint("/ws-stomp")
-                .setAllowedOrigins("*");
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/queue/chat");
+        config.setApplicationDestinationPrefixes("/ws");
     }
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // /pub로 시작되는 메시지가 message-handling methods로 라우팅 되어야 한다.
-        registry.setApplicationDestinationPrefixes("/pub");
-        // /sub, /topic, /queue 로 시작되는 메시지가 메시지 브로커로 라우팅 되어야 한다.
-        registry.enableSimpleBroker("/sub", "/topic", "/queue");
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/connection")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+        registry.addEndpoint("/connection")
+                .setAllowedOriginPatterns("*");
     }
 
     @Override
