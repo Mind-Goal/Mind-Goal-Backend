@@ -24,26 +24,24 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
-
-    @Column
-    private Long expertId;
-
     @Column
     private Long userId;
+    @Column
+    private Long expertId;
 
     @Embedded
     private ChatRoomStatus chatRoomStatus;
 
     @Builder
-    private ChatRoom(final Long id, final Long expertId, final Long userId, final ChatRoomStatus chatRoomStatus) {
+    private ChatRoom(final Long id, final Long userId, final Long expertId, final ChatRoomStatus chatRoomStatus) {
         this.id = id;
-        this.expertId = expertId;
         this.userId = userId;
+        this.expertId = expertId;
         this.chatRoomStatus = chatRoomStatus;
     }
 
-    public ChatRoom(final Long expertId, final Long userId, final ChatRoomStatus chatRoomStatus) {
-        this(null, expertId, userId, chatRoomStatus);
+    public ChatRoom(final Long userId, final Long expertId, final ChatRoomStatus chatRoomStatus) {
+        this(null, userId, expertId, chatRoomStatus);
     }
 
     public Long getHeadCount() {
