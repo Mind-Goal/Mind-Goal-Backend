@@ -25,9 +25,6 @@ public class Schedule extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "SESSION_COUNT")
-    private int sessionCount;
-
     @Column(name = "SESSION_TYPE")
     private String sessionType;
 
@@ -38,8 +35,7 @@ public class Schedule extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
 
-    public Schedule(int sessionCount, String sessionType, ScheduleDate scheduleDate, ScheduleStatus status) {
-        this.sessionCount = sessionCount;
+    public Schedule(String sessionType, ScheduleDate scheduleDate, ScheduleStatus status) {
         this.sessionType = sessionType;
         this.scheduleDate = scheduleDate;
         this.status = status;
