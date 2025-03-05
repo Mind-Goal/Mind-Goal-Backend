@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,12 @@ public class Matching extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;
+
+    @Column(name = "EXPERT_ID", nullable = false)
+    private Long expertId;
+
     @Column(name = "STATUS")
     private String status;
 
@@ -31,6 +38,25 @@ public class Matching extends BaseEntity {
 
     @Column(name = "MATCHED_AT")
     private LocalDate matchedAt;
+
+    @Builder
+    public Matching(Long id, Long userId, Long expertId, String status,
+                    String requestMessage, LocalDate matchedAt) {
+        this.id = id;
+        this.userId = userId;
+        this.expertId = expertId;
+        this.status = status;
+        this.requestMessage = requestMessage;
+        this.matchedAt = matchedAt;
+    }
+
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+
+    public void updateMatchedAt(LocalDate matchedAt) {
+        this.matchedAt = matchedAt;
+    }
 
     @Override
     public boolean equals(Object object) {
