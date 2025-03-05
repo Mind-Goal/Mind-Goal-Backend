@@ -11,6 +11,7 @@ public enum BaseResponseStatus {
     EXPERT_UPDATE_SUCCESS(true, 200, "전문가 정보 수정이 성공했습니다"),
     MATCHING_REQUEST_SUCCESS(true, 201, "매칭 요청이 성공했습니다"),
     MATCHING_CANCEL_SUCCESS(true, 200, "매칭 취소가 성공했습니다"),
+    MATCHING_LIST_SUCCESS(true, 200, "매칭 목록 조회가 성공했습니다"),
 
     // 400번대: Request 오류
     BAD_REQUEST(false, 400, "잘못된 요청입니다"),

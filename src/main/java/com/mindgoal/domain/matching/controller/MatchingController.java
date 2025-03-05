@@ -12,6 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+/**
+ * 매칭 API를 처리하는 컨트롤러 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/matching")
@@ -38,6 +43,7 @@ public class MatchingController {
     }
 
     /**
+     * 매칭 취소 API
      *
      * @param id 매칭 ID
      * @param principalDetails 인증된 사용자 정보
@@ -51,5 +57,20 @@ public class MatchingController {
         MatchingResponseDto response = matchingService.cancelMatching(id, principalDetails.getId());
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.MATCHING_CANCEL_SUCCESS.getMessage()));
+    }
+
+    /**
+     * 내 매칭 목록 조회 API
+     *
+     * @param principalDetails 인증된 사용자 정보
+     * @return 매칭 목록
+     */
+    @GetMapping("/me")
+    public ResponseEntity<BaseResponse<List<MatchingResponseDto>>> getMyMatchings(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        List<MatchingResponseDto> response = matchingService.getMyMatchings(principalDetails.getId());
+        return ResponseEntity.ok(
+                BaseResponse.success(response, BaseResponseStatus.MATCHING_LIST_SUCCESS.getMessage()));
     }
 }

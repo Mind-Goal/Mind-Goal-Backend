@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class MatchingService {
@@ -65,5 +68,20 @@ public class MatchingService {
         matching.updateStatus(MatchingStatus.CANCELED.name());
 
         return MatchingResponseDto.from(matching);
+    }
+
+    /**
+     * 사용자의 매칭 목록을 조회하는 메서드
+     *
+     * @param userId 사용자 ID
+     * @return 매칭 목록
+     */
+    @Transactional(readOnly = true)
+    public List<MatchingResponseDto> getMyMatchings(Long userId) {
+        List<Matching> matchings = matchingRepository.findByUserId(userId);
+
+        return matchings.stream()
+                .map(MatchingResponseDto::from)
+                .collect(Collectors.toList());
     }
 }
