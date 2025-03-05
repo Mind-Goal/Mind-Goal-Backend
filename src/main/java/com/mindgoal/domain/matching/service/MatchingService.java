@@ -25,7 +25,6 @@ public class MatchingService {
         Expert expert = expertRepository.findById(requestDto.getExpertId())
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
 
-
         Matching matching = Matching.builder()
                 .userId(userId)
                 .expertId(requestDto.getExpertId())
@@ -37,5 +36,34 @@ public class MatchingService {
         Matching savedMatching = matchingRepository.save(matching);
 
         return MatchingResponseDto.from(savedMatching);
+    }
+
+    /**
+     * 매칭을 취소하는 메서드
+     *
+     * @param matchingId 매칭 ID
+     * @param userId 사용자 ID
+     * @return 취소된 매칭 정보
+     */
+    @Transactional
+    public MatchingResponseDto cancelMatching(Long matchingId, Long userId) {
+        // 매칭 존재 여부 확인
+        Matching matching = matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.MATCHING_NOT_FOUND));
+
+        // 요청자 확인
+        if (!matching.getUserId().equals(userId)) {
+            throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
+        }
+
+        // 이미 취소된 매칭인지 확인
+        if (matching.getStatus().equals(MatchingStatus.CANCELED.name())) {
+            throw new CustomException(BaseResponseStatus.MATCHING_ALREADY_CANCELED);
+        }
+
+        // 매칭 상태 변경
+        matching.updateStatus(MatchingStatus.CANCELED.name());
+
+        return MatchingResponseDto.from(matching);
     }
 }
