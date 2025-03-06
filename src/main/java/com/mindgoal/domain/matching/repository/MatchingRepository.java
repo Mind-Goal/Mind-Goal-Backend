@@ -1,1 +1,9 @@
-package com.mindgoal.domain.matching.repository; 
+package com.mindgoal.domain.matching.repository;
+
+import com.mindgoal.domain.matching.entity.Matching;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface MatchingRepository extends JpaRepository<Matching, Long> {
+}
