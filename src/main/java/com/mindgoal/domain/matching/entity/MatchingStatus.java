@@ -7,7 +7,8 @@ public enum MatchingStatus {
     PENDING("대기중"),
     ACCEPTED("수락됨"),
     REJECTED("거절됨"),
-    COMPLETED("완료됨");
+    COMPLETED("완료됨"),
+    CANCELED("취소됨");
 
     private final String description;
 

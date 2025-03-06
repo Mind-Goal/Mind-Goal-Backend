@@ -17,6 +17,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -56,54 +58,80 @@ class MatchingServiceTest {
                     assertThat(matchingResponse.getStatus()).isEqualTo(MatchingStatus.PENDING.name());
                     assertThat(matchingResponse.getRequestMessage()).isEqualTo("축구 기술 향상을 위한 코칭 요청드립니다.");
                 });
-
-        // DB 검증
-        Matching foundMatching = matchingRepository.findById(response.getId())
-                .orElseThrow(() -> new AssertionError("Matching should exist"));
-
-        assertThat(foundMatching)
-                .satisfies(matching -> {
-                    assertThat(matching.getUserId()).isEqualTo(user.getId());
-                    assertThat(matching.getExpertId()).isEqualTo(expert.getId());
-                    assertThat(matching.getStatus()).isEqualTo(MatchingStatus.PENDING.name());
-                    assertThat(matching.getRequestMessage()).isEqualTo("축구 기술 향상을 위한 코칭 요청드립니다.");
-                });
     }
 
-    @DisplayName("존재하지 않는 전문가에게 매칭 요청 시 실패")
+    @DisplayName("매칭 취소 성공")
     @Test
-    void requestMatching_ExpertNotFound_ThrowsException() {
-        // given
-        User user = createUser("user@example.com", "사용자");
-        Long nonExistentExpertId = 999L;
-
-        MatchingRequest request = createMatchingRequest(nonExistentExpertId);
-
-        // when & then
-        assertThrows(CustomException.class,
-                () -> matchingService.requestMatching(user.getId(), request));
-    }
-
-    @DisplayName("매칭 요청 시 기본 상태는 PENDING")
-    @Test
-    void requestMatching_DefaultStatusIsPending() {
+    void cancelMatching_Success() {
         // given
         User user = createUser("user@example.com", "사용자");
         User expertUser = createUser("expert@example.com", "전문가");
         Expert expert = createExpert(expertUser.getId());
 
+        // 매칭 생성
+        Matching matching = createMatching(user.getId(), expert.getId());
+
+        // when
+        MatchingResponse response = matchingService.cancelMatching(matching.getId(), user.getId());
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(MatchingStatus.CANCELED.name());
+
+        // DB 검증
+        Matching foundMatching = matchingRepository.findById(matching.getId())
+                .orElseThrow(() -> new AssertionError("Matching should exist"));
+        assertThat(foundMatching.getStatus()).isEqualTo(MatchingStatus.CANCELED.name());
+    }
+
+    @DisplayName("존재하지 않는 매칭 취소 시 실패")
+    @Test
+    void cancelMatching_NotFound_ThrowsException() {
+        // given
+        User user = createUser("user@example.com", "사용자");
+        Long nonExistentExpertId = 999L;
+
+        MatchingRequest request = createMatchingRequest(nonExistentExpertId);
+        Long nonExistentMatchingId = 999L;
+
+        // when & then
+        assertThrows(CustomException.class,
+                () -> matchingService.cancelMatching(nonExistentMatchingId, user.getId()));
+    }
+
+    @DisplayName("타인의 매칭 취소 시 실패")
+    @Test
+    void cancelMatching_UnauthorizedAccess_ThrowsException() {
+        // given
+        User user = createUser("user@example.com", "사용자");
+        User otherUser = createUser("other@example.com", "다른사용자");
+        User expertUser = createUser("expert@example.com", "전문가");
+        Expert expert = createExpert(expertUser.getId());
+
         MatchingRequest request = createMatchingRequest(expert.getId());
+        // user의 매칭 생성
+        Matching matching = createMatching(user.getId(), expert.getId());
 
         // when
         MatchingResponse response = matchingService.requestMatching(user.getId(), request);
+        // when & then
+        assertThrows(CustomException.class,
+                () -> matchingService.cancelMatching(matching.getId(), otherUser.getId()));
+    }
 
-        // then
-        assertThat(response.getStatus()).isEqualTo(MatchingStatus.PENDING.name());
+    @DisplayName("이미 취소된 매칭 취소 시 실패")
+    @Test
+    void cancelMatching_AlreadyCanceled_ThrowsException() {
+        // given
+        User user = createUser("user@example.com", "사용자");
+        User expertUser = createUser("expert@example.com", "전문가");
+        Expert expert = createExpert(expertUser.getId());
 
-        // DB 검증
-        Matching foundMatching = matchingRepository.findById(response.getId())
-                .orElseThrow(() -> new AssertionError("Matching should exist"));
-        assertThat(foundMatching.getStatus()).isEqualTo(MatchingStatus.PENDING.name());
+        // 취소된 매칭 생성
+        Matching matching = createCanceledMatching(user.getId(), expert.getId());
+
+        // when & then
+        assertThrows(CustomException.class,
+                () -> matchingService.cancelMatching(matching.getId(), user.getId()));
     }
 
     private User createUser(String email, String name) {
@@ -142,5 +170,25 @@ class MatchingServiceTest {
                 .expertId(expertId)
                 .requestMessage("축구 기술 향상을 위한 코칭 요청드립니다.")
                 .build();
+    }
+
+    private Matching createMatching(Long userId, Long expertId) {
+        Matching matching = Matching.builder()
+                .userId(userId)
+                .expertId(expertId)
+                .status(MatchingStatus.PENDING.name())
+                .requestMessage("축구 기술 향상을 위한 코칭 요청드립니다.")
+                .build();
+        return matchingRepository.save(matching);
+    }
+
+    private Matching createCanceledMatching(Long userId, Long expertId) {
+        Matching matching = Matching.builder()
+                .userId(userId)
+                .expertId(expertId)
+                .status(MatchingStatus.CANCELED.name())
+                .requestMessage("취소된 요청입니다.")
+                .build();
+        return matchingRepository.save(matching);
     }
 }

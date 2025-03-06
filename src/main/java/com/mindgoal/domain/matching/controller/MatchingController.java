@@ -12,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 매칭 API를 처리하는 컨트롤러 클래스
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/matching")
@@ -38,5 +35,22 @@ public class MatchingController {
         return ResponseEntity
                 .status(BaseResponseStatus.MATCHING_REQUEST_SUCCESS.getCode())
                 .body(BaseResponse.success(response, BaseResponseStatus.MATCHING_REQUEST_SUCCESS.getMessage()));
+    }
+
+    /**
+     *
+     *
+     * @param matchingId 매칭 ID
+     * @param principalDetails 인증된 사용자 정보
+     * @return 취소된 매칭 정보
+     */
+    @GetMapping("/{matchingId}")
+    public ResponseEntity<BaseResponse<MatchingResponseDto>> cancelMatching(
+            @PathVariable Long matchingId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        MatchingResponseDto response = matchingService.cancelMatching(matchingId, principalDetails.getId());
+        return ResponseEntity.ok(
+                BaseResponse.success(response, BaseResponseStatus.MATCHING_CANCEL_SUCCESS.getMessage()));
     }
 }
