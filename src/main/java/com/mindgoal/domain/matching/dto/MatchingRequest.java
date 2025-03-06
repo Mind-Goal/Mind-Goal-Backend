@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MatchingRequestDto {
+public class MatchingRequest {
 
     @NotNull(message = "전문가 ID는 필수 입력값입니다")
     private Long expertId;

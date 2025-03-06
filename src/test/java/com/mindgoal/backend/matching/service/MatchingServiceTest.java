@@ -3,8 +3,8 @@ package com.mindgoal.backend.matching.service;
 import com.mindgoal.backend.support.annotation.ServiceTest;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
-import com.mindgoal.domain.matching.dto.MatchingRequestDto;
-import com.mindgoal.domain.matching.dto.MatchingResponseDto;
+import com.mindgoal.domain.matching.dto.MatchingRequest;
+import com.mindgoal.domain.matching.dto.MatchingResponse;
 import com.mindgoal.domain.matching.entity.Matching;
 import com.mindgoal.domain.matching.entity.MatchingStatus;
 import com.mindgoal.domain.matching.repository.MatchingRepository;
@@ -16,8 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,13 +35,6 @@ class MatchingServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        matchingRepository.deleteAll();
-        expertRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @DisplayName("매칭 요청 성공")
     @Test
     void requestMatching_Success() {
@@ -52,10 +43,10 @@ class MatchingServiceTest {
         User expertUser = createUser("expert@example.com", "전문가");
         Expert expert = createExpert(expertUser.getId());
 
-        MatchingRequestDto request = createMatchingRequest(expert.getId());
+        MatchingRequest request = createMatchingRequest(expert.getId());
 
         // when
-        MatchingResponseDto response = matchingService.requestMatching(user.getId(), request);
+        MatchingResponse response = matchingService.requestMatching(user.getId(), request);
 
         // then
         assertThat(response)
@@ -86,7 +77,7 @@ class MatchingServiceTest {
         User user = createUser("user@example.com", "사용자");
         Long nonExistentExpertId = 999L;
 
-        MatchingRequestDto request = createMatchingRequest(nonExistentExpertId);
+        MatchingRequest request = createMatchingRequest(nonExistentExpertId);
 
         // when & then
         assertThrows(CustomException.class,
@@ -101,10 +92,10 @@ class MatchingServiceTest {
         User expertUser = createUser("expert@example.com", "전문가");
         Expert expert = createExpert(expertUser.getId());
 
-        MatchingRequestDto request = createMatchingRequest(expert.getId());
+        MatchingRequest request = createMatchingRequest(expert.getId());
 
         // when
-        MatchingResponseDto response = matchingService.requestMatching(user.getId(), request);
+        MatchingResponse response = matchingService.requestMatching(user.getId(), request);
 
         // then
         assertThat(response.getStatus()).isEqualTo(MatchingStatus.PENDING.name());
@@ -146,8 +137,8 @@ class MatchingServiceTest {
         return expertRepository.save(expert);
     }
 
-    private MatchingRequestDto createMatchingRequest(Long expertId) {
-        return MatchingRequestDto.builder()
+    private MatchingRequest createMatchingRequest(Long expertId) {
+        return MatchingRequest.builder()
                 .expertId(expertId)
                 .requestMessage("축구 기술 향상을 위한 코칭 요청드립니다.")
                 .build();
