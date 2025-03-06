@@ -1,4 +1,6 @@
 package com.mindgoal.domain.schedule.dto;
 
-public record ScheduleRequest(Long userId, Long expertId, String sessionType) {
+import java.time.LocalDateTime;
+
+public record ScheduleRequest(Long expertId, LocalDateTime startTime, String sessionType) {
 }
