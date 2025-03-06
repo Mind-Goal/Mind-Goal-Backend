@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MatchingResponseDto {
+public class MatchingResponse {
     private Long id;
     private Long userId;
     private Long expertId;
@@ -21,8 +21,8 @@ public class MatchingResponseDto {
     private String requestMessage;
     private LocalDate matchedAt;
 
-    public static MatchingResponseDto from(Matching matching) {
-        return MatchingResponseDto.builder()
+    public static MatchingResponse from(Matching matching) {
+        return MatchingResponse.builder()
                 .id(matching.getId())
                 .userId(matching.getUserId())
                 .expertId(matching.getExpertId())
