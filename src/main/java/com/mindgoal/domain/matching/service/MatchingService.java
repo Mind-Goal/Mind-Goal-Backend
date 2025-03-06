@@ -2,8 +2,8 @@ package com.mindgoal.domain.matching.service;
 import com.mindgoal.common.BaseResponseStatus;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
-import com.mindgoal.domain.matching.dto.MatchingRequestDto;
-import com.mindgoal.domain.matching.dto.MatchingResponseDto;
+import com.mindgoal.domain.matching.dto.MatchingRequest;
+import com.mindgoal.domain.matching.dto.MatchingResponse;
 import com.mindgoal.domain.matching.entity.Matching;
 import com.mindgoal.domain.matching.entity.MatchingStatus;
 import com.mindgoal.domain.matching.repository.MatchingRepository;
@@ -11,6 +11,8 @@ import com.mindgoal.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +22,9 @@ public class MatchingService {
     private final ExpertRepository expertRepository;
 
     @Transactional
-    public MatchingResponseDto requestMatching(Long userId, MatchingRequestDto requestDto) {
+    public MatchingResponse requestMatching(Long userId, MatchingRequest requestDto) {
         // 전문가 존재 여부 확인
-        Expert expert = expertRepository.findById(requestDto.getExpertId())
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
+        Expert expert = findExpertById(requestDto.getExpertId());
 
         Matching matching = Matching.builder()
                 .userId(userId)
@@ -32,10 +33,8 @@ public class MatchingService {
                 .requestMessage(requestDto.getRequestMessage())
                 .build();
 
-        // 매칭 저장
-        Matching savedMatching = matchingRepository.save(matching);
-
-        return MatchingResponseDto.from(savedMatching);
+        // 저장하고 바로 DTO로 변환하여 반환
+        return MatchingResponse.from(matchingRepository.save(matching));
     }
 
     /**
@@ -46,7 +45,7 @@ public class MatchingService {
      * @return 취소된 매칭 정보
      */
     @Transactional
-    public MatchingResponseDto cancelMatching(Long matchingId, Long userId) {
+    public MatchingResponse cancelMatching(Long matchingId, Long userId) {
         // 매칭 조회
         Matching matching = findMatchingById(matchingId);
 
@@ -56,7 +55,34 @@ public class MatchingService {
         // 매칭 상태 변경
         matching.updateStatus(MatchingStatus.CANCELED.name());
 
-        return MatchingResponseDto.from(matching);
+        return MatchingResponse.from(matching);
+    }
+
+    /**
+     * 사용자의 매칭 목록을 조회하는 메서드
+     *
+     * @param userId 사용자 ID
+     * @return 매칭 목록
+     */
+    @Transactional(readOnly = true)
+    public List<MatchingResponse> getMyMatchings(Long userId) {
+        List<Matching> matchings = matchingRepository.findAllByUserId(userId);
+
+        return matchings.stream()
+                .map(MatchingResponse::from)
+                .toList();
+    }
+
+    /**
+     * 전문가 ID로 전문가를 찾는 메서드
+     *
+     * @param expertId 전문가 ID
+     * @return 전문가 엔티티
+     * @throws CustomException 전문가를 찾을 수 없는 경우 예외 발생
+     */
+    private Expert findExpertById(Long expertId) {
+        return expertRepository.findById(expertId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.EXPERT_NOT_FOUND));
     }
 
     private Matching findMatchingById(Long matchingId) {
