@@ -78,10 +78,10 @@ public class MatchingService {
      */
     @Transactional(readOnly = true)
     public List<MatchingResponseDto> getMyMatchings(Long userId) {
-        List<Matching> matchings = matchingRepository.findByUserId(userId);
+        List<Matching> matchings = matchingRepository.findAllByUserId(userId);
 
         return matchings.stream()
                 .map(MatchingResponseDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

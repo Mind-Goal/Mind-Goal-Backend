@@ -18,5 +18,5 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
      * @param userId 사용자 ID
      * @return 매칭 목록
      */
-    List<Matching> findByUserId(Long userId);
+    List<Matching> findAllByUserId(Long userId);
 }
