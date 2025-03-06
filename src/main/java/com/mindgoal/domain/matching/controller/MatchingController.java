@@ -39,16 +39,17 @@ public class MatchingController {
 
     /**
      *
-     * @param id 매칭 ID
+     *
+     * @param matchingId 매칭 ID
      * @param principalDetails 인증된 사용자 정보
      * @return 취소된 매칭 정보
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{matchingId}")
     public ResponseEntity<BaseResponse<MatchingResponseDto>> cancelMatching(
-            @PathVariable Long id,
+            @PathVariable Long matchingId,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        MatchingResponseDto response = matchingService.cancelMatching(id, principalDetails.getId());
+        MatchingResponseDto response = matchingService.cancelMatching(matchingId, principalDetails.getId());
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.MATCHING_CANCEL_SUCCESS.getMessage()));
     }

@@ -47,23 +47,37 @@ public class MatchingService {
      */
     @Transactional
     public MatchingResponseDto cancelMatching(Long matchingId, Long userId) {
-        // 매칭 존재 여부 확인
-        Matching matching = matchingRepository.findById(matchingId)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.MATCHING_NOT_FOUND));
+        // 매칭 조회
+        Matching matching = findMatchingById(matchingId);
 
-        // 요청자 확인
-        if (!matching.getUserId().equals(userId)) {
-            throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
-        }
-
-        // 이미 취소된 매칭인지 확인
-        if (matching.getStatus().equals(MatchingStatus.CANCELED.name())) {
-            throw new CustomException(BaseResponseStatus.MATCHING_ALREADY_CANCELED);
-        }
+        // 매칭 검증
+        validateMatching(matching, userId);
 
         // 매칭 상태 변경
         matching.updateStatus(MatchingStatus.CANCELED.name());
 
         return MatchingResponseDto.from(matching);
+    }
+
+    private Matching findMatchingById(Long matchingId) {
+        return matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.MATCHING_NOT_FOUND));
+    }
+
+    private void validateMatching(Matching matching, Long userId) {
+        validateMatchingOwner(matching, userId);
+        validateMatchingStatus(matching);
+    }
+
+    private void validateMatchingOwner(Matching matching, Long userId) {
+        if (!matching.getUserId().equals(userId)) {
+            throw new CustomException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    private void validateMatchingStatus(Matching matching) {
+        if (matching.getStatus().equals(MatchingStatus.CANCELED.name())) {
+            throw new CustomException(BaseResponseStatus.MATCHING_ALREADY_CANCELED);
+        }
     }
 }
