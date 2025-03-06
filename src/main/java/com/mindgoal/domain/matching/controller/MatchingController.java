@@ -2,8 +2,8 @@ package com.mindgoal.domain.matching.controller;
 
 import com.mindgoal.common.BaseResponse;
 import com.mindgoal.common.BaseResponseStatus;
-import com.mindgoal.domain.matching.dto.MatchingRequestDto;
-import com.mindgoal.domain.matching.dto.MatchingResponseDto;
+import com.mindgoal.domain.matching.dto.MatchingRequest;
+import com.mindgoal.domain.matching.dto.MatchingResponse;
 import com.mindgoal.domain.matching.service.MatchingService;
 import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
 import jakarta.validation.Valid;
@@ -32,11 +32,11 @@ public class MatchingController {
      * @return 생성된 매칭 정보
      */
     @PostMapping
-    public ResponseEntity<BaseResponse<MatchingResponseDto>> requestMatching(
-            @RequestBody @Valid MatchingRequestDto requestDto,
+    public ResponseEntity<BaseResponse<MatchingResponse>> requestMatching(
+            @RequestBody @Valid MatchingRequest requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        MatchingResponseDto response = matchingService.requestMatching(principalDetails.getId(), requestDto);
+        MatchingResponse response = matchingService.requestMatching(principalDetails.getId(), requestDto);
         return ResponseEntity
                 .status(BaseResponseStatus.MATCHING_REQUEST_SUCCESS.getCode())
                 .body(BaseResponse.success(response, BaseResponseStatus.MATCHING_REQUEST_SUCCESS.getMessage()));
@@ -45,16 +45,16 @@ public class MatchingController {
     /**
      * 매칭 취소 API
      *
-     * @param id 매칭 ID
+     * @param matchingId 매칭 ID
      * @param principalDetails 인증된 사용자 정보
      * @return 취소된 매칭 정보
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<MatchingResponseDto>> cancelMatching(
-            @PathVariable Long id,
+    @GetMapping("/{matchingId}")
+    public ResponseEntity<BaseResponse<MatchingResponse>> cancelMatching(
+            @PathVariable Long matchingId,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        MatchingResponseDto response = matchingService.cancelMatching(id, principalDetails.getId());
+        MatchingResponse response = matchingService.cancelMatching(matchingId, principalDetails.getId());
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.MATCHING_CANCEL_SUCCESS.getMessage()));
     }
@@ -66,10 +66,10 @@ public class MatchingController {
      * @return 매칭 목록
      */
     @GetMapping("/me")
-    public ResponseEntity<BaseResponse<List<MatchingResponseDto>>> getMyMatchings(
+    public ResponseEntity<BaseResponse<List<MatchingResponse>>> getMyMatchings(
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        List<MatchingResponseDto> response = matchingService.getMyMatchings(principalDetails.getId());
+        List<MatchingResponse> response = matchingService.getMyMatchings(principalDetails.getId());
         return ResponseEntity.ok(
                 BaseResponse.success(response, BaseResponseStatus.MATCHING_LIST_SUCCESS.getMessage()));
     }

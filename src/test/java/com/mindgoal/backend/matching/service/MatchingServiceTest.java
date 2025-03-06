@@ -3,8 +3,8 @@ package com.mindgoal.backend.matching.service;
 import com.mindgoal.backend.support.annotation.ServiceTest;
 import com.mindgoal.domain.expert.entity.Expert;
 import com.mindgoal.domain.expert.repository.ExpertRepository;
-import com.mindgoal.domain.matching.dto.MatchingRequestDto;
-import com.mindgoal.domain.matching.dto.MatchingResponseDto;
+import com.mindgoal.domain.matching.dto.MatchingRequest;
+import com.mindgoal.domain.matching.dto.MatchingResponse;
 import com.mindgoal.domain.matching.entity.Matching;
 import com.mindgoal.domain.matching.entity.MatchingStatus;
 import com.mindgoal.domain.matching.repository.MatchingRepository;
@@ -12,7 +12,6 @@ import com.mindgoal.domain.matching.service.MatchingService;
 import com.mindgoal.domain.user.entity.User;
 import com.mindgoal.domain.user.repository.UserRepository;
 import com.mindgoal.exception.CustomException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +36,6 @@ class MatchingServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        matchingRepository.deleteAll();
-        expertRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @DisplayName("매칭 요청 성공")
     @Test
     void requestMatching_Success() {
@@ -52,10 +44,10 @@ class MatchingServiceTest {
         User expertUser = createUser("expert@example.com", "전문가");
         Expert expert = createExpert(expertUser.getId());
 
-        MatchingRequestDto request = createMatchingRequest(expert.getId());
+        MatchingRequest request = createMatchingRequest(expert.getId());
 
         // when
-        MatchingResponseDto response = matchingService.requestMatching(user.getId(), request);
+        MatchingResponse response = matchingService.requestMatching(user.getId(), request);
 
         // then
         assertThat(response)
@@ -79,7 +71,7 @@ class MatchingServiceTest {
         Matching matching = createMatching(user.getId(), expert.getId());
 
         // when
-        MatchingResponseDto response = matchingService.cancelMatching(matching.getId(), user.getId());
+        MatchingResponse response = matchingService.cancelMatching(matching.getId(), user.getId());
 
         // then
         assertThat(response.getStatus()).isEqualTo(MatchingStatus.CANCELED.name());
@@ -149,22 +141,22 @@ class MatchingServiceTest {
         Matching matching3 = createMatchingWithMessage(user.getId(), expert.getId(), "세 번째 요청");
 
         // when
-        List<MatchingResponseDto> responses = matchingService.getMyMatchings(user.getId());
+        List<MatchingResponse> responses = matchingService.getMyMatchings(user.getId());
 
         // then
         assertThat(responses).hasSize(3);
 
         // 매칭 정보 확인
         assertThat(responses)
-                .extracting(MatchingResponseDto::getUserId)
+                .extracting(MatchingResponse::getUserId)
                 .containsOnly(user.getId());
 
         assertThat(responses)
-                .extracting(MatchingResponseDto::getExpertId)
+                .extracting(MatchingResponse::getExpertId)
                 .containsOnly(expert.getId());
 
         assertThat(responses)
-                .extracting(MatchingResponseDto::getRequestMessage)
+                .extracting(MatchingResponse::getRequestMessage)
                 .containsExactlyInAnyOrder("첫 번째 요청", "두 번째 요청", "세 번째 요청");
     }
 
@@ -175,7 +167,7 @@ class MatchingServiceTest {
         User user = createUser("user@example.com", "사용자");
 
         // when
-        List<MatchingResponseDto> responses = matchingService.getMyMatchings(user.getId());
+        List<MatchingResponse> responses = matchingService.getMyMatchings(user.getId());
 
         // then
         assertThat(responses).isEmpty();
@@ -198,8 +190,8 @@ class MatchingServiceTest {
         Matching matching3 = createMatchingWithMessage(user2.getId(), expert.getId(), "사용자2의 요청");
 
         // when
-        List<MatchingResponseDto> user1Responses = matchingService.getMyMatchings(user1.getId());
-        List<MatchingResponseDto> user2Responses = matchingService.getMyMatchings(user2.getId());
+        List<MatchingResponse> user1Responses = matchingService.getMyMatchings(user1.getId());
+        List<MatchingResponse> user2Responses = matchingService.getMyMatchings(user2.getId());
 
         // then
         assertThat(user1Responses).hasSize(2);
@@ -207,12 +199,12 @@ class MatchingServiceTest {
 
         // 사용자1의 매칭만 조회되는지 확인
         assertThat(user1Responses)
-                .extracting(MatchingResponseDto::getRequestMessage)
+                .extracting(MatchingResponse::getRequestMessage)
                 .containsExactlyInAnyOrder("사용자1의 요청1", "사용자1의 요청2");
 
         // 사용자2의 매칭만 조회되는지 확인
         assertThat(user2Responses)
-                .extracting(MatchingResponseDto::getRequestMessage)
+                .extracting(MatchingResponse::getRequestMessage)
                 .containsExactly("사용자2의 요청");
     }
 
@@ -247,8 +239,8 @@ class MatchingServiceTest {
         return expertRepository.save(expert);
     }
 
-    private MatchingRequestDto createMatchingRequest(Long expertId) {
-        return MatchingRequestDto.builder()
+    private MatchingRequest createMatchingRequest(Long expertId) {
+        return MatchingRequest.builder()
                 .expertId(expertId)
                 .requestMessage("축구 기술 향상을 위한 코칭 요청드립니다.")
                 .build();
