@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,8 +26,11 @@ public class Schedule extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "SESSION_COUNT")
-    private int sessionCount;
+    @Column
+    private Long userId;
+
+    @Column
+    private Long expertId;
 
     @Column(name = "SESSION_TYPE")
     private String sessionType;
@@ -38,11 +42,28 @@ public class Schedule extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
 
-    public Schedule(int sessionCount, String sessionType, ScheduleDate scheduleDate, ScheduleStatus status) {
-        this.sessionCount = sessionCount;
+    public Schedule(Long userId, Long expertId, String sessionType, ScheduleDate scheduleDate, ScheduleStatus status) {
+        this.userId = userId;
+        this.expertId = expertId;
         this.sessionType = sessionType;
         this.scheduleDate = scheduleDate;
         this.status = status;
+    }
+
+    public Schedule(Long userId, Long expertId, String sessionType, ScheduleDate scheduleDate) {
+        this.userId = userId;
+        this.expertId = expertId;
+        this.sessionType = sessionType;
+        this.scheduleDate = scheduleDate;
+        this.status = ScheduleStatus.BOOKED;
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.scheduleDate.getStartDate();
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.scheduleDate.getStartDate();
     }
 
     @Override

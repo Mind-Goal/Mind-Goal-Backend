@@ -9,9 +9,11 @@ import com.mindgoal.domain.expert.repository.ExpertRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ExpertRepository expertRepository;
@@ -22,6 +24,7 @@ public class ChatRoomService {
         return ChatRoomResponse.from(chatRoomRepository.save(chatRoom));
     }
 
+    @Transactional(readOnly = true)
     public List<ChatRoomResponse> getMyChatRooms(final Long userId) {
         if (isExpert(userId)) {
             final Long expertId = expertRepository.findExpertByUserId(userId).getId();

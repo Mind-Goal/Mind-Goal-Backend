@@ -2,7 +2,7 @@ package com.mindgoal.domain.schedule.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,18 +12,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleDate {
     @Column(name = "START_DATE", nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "END_DATE", nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
-    public ScheduleDate(LocalDate startDate, LocalDate endDate) {
+    public ScheduleDate(LocalDateTime startDate, LocalDateTime endDate) {
         validateDate(startDate, endDate);
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    private void validateDate(LocalDate startDate, LocalDate endDate) {
+    private void validateDate(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate.isAfter(endDate) || endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("잘못된 날짜 입력입니다.");
         }
