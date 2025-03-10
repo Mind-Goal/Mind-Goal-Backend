@@ -26,7 +26,7 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponse> getMyChatRooms(final Long userId) {
-        if (isExpert(userId)) {
+        if (expertRepository.existsByUserId(userId)) {
             final Long expertId = expertRepository.findExpertByUserId(userId).getId();
             return chatRoomRepository.findAllByExpertId(expertId).stream()
                     .map(ChatRoomResponse::from)
@@ -35,9 +35,5 @@ public class ChatRoomService {
         return chatRoomRepository.findAllByUserId(userId).stream()
                 .map(ChatRoomResponse::from)
                 .toList();
-    }
-
-    private boolean isExpert(final Long userId) {
-        return expertRepository.existsByUserId(userId);
     }
 }
