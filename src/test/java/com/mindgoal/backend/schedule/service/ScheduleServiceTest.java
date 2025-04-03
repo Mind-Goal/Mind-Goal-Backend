@@ -48,4 +48,15 @@ public class ScheduleServiceTest {
         assertThatThrownBy(() -> scheduleService.create(stepRequest, step.getId())).isInstanceOf(
                 IllegalArgumentException.class);
     }
+
+    @Test
+    void 사용자_일정_조회() {
+        User ocean = UserFixture.오션();
+        User step = UserFixture.스텝();
+        Expert expert = ExpertFixture.진로_전문가();
+
+        ScheduleRequest oceanRequest = new ScheduleRequest(expert.getId(), LocalDateTime.of(2025, 4, 6, 14, 0, 0),
+                "BASIC");
+        scheduleService.create(oceanRequest, ocean.getId());
+    }
 }

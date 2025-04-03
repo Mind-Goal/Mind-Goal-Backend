@@ -4,12 +4,16 @@ import com.mindgoal.domain.schedule.dto.ScheduleRequest;
 import com.mindgoal.domain.schedule.dto.ScheduleResponse;
 import com.mindgoal.domain.schedule.service.ScheduleService;
 import com.mindgoal.domain.user.entity.auth.PrincipalDetails;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,5 +26,12 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponse> createSchedule(@RequestBody ScheduleRequest request,
                                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ResponseEntity.ok(scheduleService.create(request, principalDetails.getId()));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<ScheduleResponse>> getMySchedules(@RequestParam LocalDate startTime,
+                                                                 @RequestParam LocalDate endTime,
+                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ResponseEntity.ok(scheduleService.findMySchedules(startTime, endTime, principalDetails.getId()));
     }
 }

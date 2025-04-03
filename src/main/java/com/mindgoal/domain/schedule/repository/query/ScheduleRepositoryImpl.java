@@ -1,9 +1,14 @@
 package com.mindgoal.domain.schedule.repository.query;
 
 
+import static com.mindgoal.domain.schedule.entity.QSchedule.schedule;
+
 import com.mindgoal.domain.schedule.entity.QSchedule;
+import com.mindgoal.domain.schedule.entity.Schedule;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,8 +25,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 .selectOne()
                 .from(schedule)
                 .where(schedule.userId.eq(userId)
-                        .and(schedule.scheduleDate.startDate.lt(endTime))  // 예약 종료 시간이 startTime보다 뒤여야 함
-                        .and(schedule.scheduleDate.endDate.gt(startTime))  // 예약 시작 시간이 endTime보다 앞이어야 함
+                        .and(schedule.scheduleDate.startDate.lt(endTime))
+                        .and(schedule.scheduleDate.endDate.gt(startTime))
                 )
                 .fetchFirst() != null;
 
@@ -36,5 +41,27 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 .fetchFirst() != null;
 
         return userHasSchedule || expertHasSchedule;
+    }
+
+    @Override
+    public List<Schedule> findAllByDateAndUserId(LocalDate startTime, LocalDate endTime, Long userId) {
+        return queryFactory
+                .selectFrom(schedule)
+                .where(
+                        schedule.scheduleDate.startDate.between(startTime.atStartOfDay(), endTime.atTime(23, 59, 59)),
+                        schedule.userId.eq(userId)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Schedule> findAllByDateAndExpertId(LocalDate startTime, LocalDate endTime, Long expertId) {
+        return queryFactory
+                .selectFrom(schedule)
+                .where(
+                        schedule.scheduleDate.startDate.between(startTime.atStartOfDay(), endTime.atTime(23, 59, 59)),
+                        schedule.expertId.eq(expertId)
+                )
+                .fetch();
     }
 }

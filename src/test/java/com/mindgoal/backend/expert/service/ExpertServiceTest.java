@@ -33,12 +33,6 @@ class ExpertServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        expertRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @DisplayName("전문가 등록 성공")
     @Test
     void register_Success() {
